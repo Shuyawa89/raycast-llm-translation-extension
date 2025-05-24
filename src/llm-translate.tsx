@@ -1,13 +1,45 @@
 import { List, Action, ActionPanel, showToast, Toast } from "@raycast/api";
+import { useState } from "react";
 
 export default function Command() {
-  const handleTranslate = (direction: string, text: string) => {
+  const [translationResult, setTranslationResult] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const handleTranslate = async (direction: string, text: string) => {
+    setIsLoading(true); // ローディング開始
+
     showToast({
-      style: Toast.Style.Success,
+      style: Toast.Style.Animated,
       title: `${direction} 翻訳開始`,
       message: `${text} を翻訳します`
     });
+
+    setTimeout(() => {
+      const mockResult = direction === "日英" ? "Hello, nice to meet you!" : "こんにちは、初めまして！";
+      setTranslationResult(`
+# 翻訳完了
+
+## 元のテキスト
+${text}
+
+## 翻訳結果
+${mockResult}
+
+## 情報
+- 翻訳方向: ${direction}
+- 処理時間: 2秒（模擬）
+      `);
+
+      setIsLoading(false);  // ローディング完了
+
+      showToast({
+        style: Toast.Style.Success,
+        title: "翻訳完了!",
+        message: "結果を確認してください。"
+      });
+    }, 2000);
   };
+
   return (
     <List>
       <List.Item
