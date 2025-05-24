@@ -1,11 +1,11 @@
-import { List, Action, ActionPanel, showToast, Toast } from "@raycast/api";
+import { List, Action, ActionPanel, showToast, Toast, Detail } from "@raycast/api";
 import { useState } from "react";
 
 export default function Command() {
   const [translationResult, setTranslationResult] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleTranslate = async (direction: string, text: string) => {
+  const handleTranslate = async (direction: string, text: string): Promise<void> => {
     setIsLoading(true); // ローディング開始
 
     showToast({
@@ -39,6 +39,23 @@ ${mockResult}
       });
     }, 2000);
   };
+
+  // 結果があった場合の画面
+  if(translationResult) {
+    return (
+      <Detail
+        markdown={translationResult}
+        actions={
+          <ActionPanel>
+            <Action
+              title="リストに戻る"
+              onAction={() => setTranslationResult(null)}
+            />
+          </ActionPanel>
+        }
+      />
+    )
+  }
 
   return (
     <List>
