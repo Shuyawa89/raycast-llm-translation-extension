@@ -1,6 +1,28 @@
 import { List, Action, ActionPanel, showToast, Toast, Detail } from "@raycast/api";
 import { useState } from "react";
 
+
+interface OllamaResponse {
+  model: string;
+  created_at: string;
+  response: string;
+  done: boolean;
+  context?: number[];
+  total_duration?: number;
+  load_duration?: number;
+  prompt_eval_count?: number;
+  prompt_eval_duration?: number;
+  eval_count?: number;
+  eval_duration?: number;
+}
+
+interface TranslationRequest {
+  model: string;
+  system: string;
+  prompt: string;
+  stream: boolean;
+}
+
 export default function Command() {
   const [translationResult, setTranslationResult] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -15,22 +37,28 @@ export default function Command() {
     });
 
     try {
-      const response = await fetch("http://localhost:11434/api/generate", {
-        method: "post",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
+      const requestData: TranslationRequest = {
           model: "qwen3:8b",
           system: "You are a specialized translation AI. Your task is to translate between Japanese and English:\n- If the input text is in Japanese, translate it to English\n- If the input text is in English, translate it to Japanese\n- Maintain the original tone and context as much as possible\n- For mixed-language text, leave parts in their most appropriate language rather than forcing translation\n- Do not translate code, technical identifiers, or untranslatable content - leave them as-is\n- For technical terms, consider providing English terms in parentheses when translating to Japanese for better readability\n- Respond with only the translated text, no explanations or additional comments",
           prompt: `${text} /nothink`,
           stream: false
-        })
+        }
+      const response: Response = await fetch("http://localhost:11434/api/generate", {
+        method: "post",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
       });
 
-      if (!response.ok) throw new Error('HTTP error! status: ${response.status}');
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
-      const result = await response.json();
+      const result: OllamaResponse = await response.json() as OllamaResponse; // 無理やり型を合わせてる
+
+      // 🧹 <think>タグを除去する処理を追加
+      const cleanedResponse = result.response
+        .replace(/<think>[\s\S]*?<\/think>/g, '')  // <think>...</think>を除去
+        .trim();  // 前後の空白を除去
 
       // 翻訳結果をstateに保存する
       setTranslationResult(`
@@ -40,12 +68,12 @@ export default function Command() {
 ${text}
 
 ## 翻訳結果
-${result.response}
+${cleanedResponse}
 
 ## 情報
 - 翻訳方向: ${direction}
-- 使用モデル: Qwen3:8b
-- 実際のAPI通信で翻訳
+- 使用モデル: ${result.model}
+- 処理時間: ${result.total_duration ? Math.round(result.total_duration / 1000000) + 'ms' : '不明'}
         `);
       showToast({
         style: Toast.Style.Success,
