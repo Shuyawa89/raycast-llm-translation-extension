@@ -32,14 +32,7 @@ export default function Command() {
 
       const result = await response.json();
 
-    } catch (error){
-      console.log(error);
-    } finally {
-      console.log("hoge");
-    };
-
-    setTimeout(() => {
-      const mockResult = direction === "日英" ? "Hello, nice to meet you!" : "こんにちは、初めまして！";
+      // 翻訳結果をstateに保存する
       setTranslationResult(`
 # 翻訳完了
 
@@ -47,21 +40,46 @@ export default function Command() {
 ${text}
 
 ## 翻訳結果
-${mockResult}
+${result.response}
 
 ## 情報
 - 翻訳方向: ${direction}
-- 処理時間: 2秒（模擬）
-      `);
-
-      setIsLoading(false);  // ローディング完了
-
+- 使用モデル: Qwen3:8b
+- 実際のAPI通信で翻訳
+        `);
       showToast({
         style: Toast.Style.Success,
         title: "翻訳完了!",
         message: "結果を確認してください。"
       });
-    }, 2000);
+
+    } catch (error){
+      console.error('Translation error', error);
+
+      showToast({
+        style: Toast.Style.Failure,
+        title: "翻訳エラー",
+        message: "Ollamaが正常に起動しているか確認してください。"
+      })
+
+      setTranslationResult(`
+# 翻訳エラー
+
+## エラー内容
+${error}
+
+## 対処方法
+1. Ollamaが起動しているか確認: \`ollama serve\`
+2. Qwen3:8bモデルがインストールされているか確認
+3. ネットワーク接続を確認
+
+## 元のテキスト
+${text}
+      `);
+
+    } finally {
+      setIsLoading(false);
+    };
   };
 
   // 結果があった場合の画面
