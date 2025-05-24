@@ -38,11 +38,11 @@ export default function Command() {
 
     try {
       const requestData: TranslationRequest = {
-          model: "qwen3:8b",
-          system: "You are a specialized translation AI. Your task is to translate between Japanese and English:\n- If the input text is in Japanese, translate it to English\n- If the input text is in English, translate it to Japanese\n- Maintain the original tone and context as much as possible\n- For mixed-language text, leave parts in their most appropriate language rather than forcing translation\n- Do not translate code, technical identifiers, or untranslatable content - leave them as-is\n- For technical terms, consider providing English terms in parentheses when translating to Japanese for better readability\n- Respond with only the translated text, no explanations or additional comments",
-          prompt: `${text} /nothink`,
-          stream: false
-        }
+        model: "qwen3:8b",
+        system: "You are a specialized translation AI. Your task is to translate between Japanese and English:\n- If the input text is in Japanese, translate it to English\n- If the input text is in English, translate it to Japanese\n- Maintain the original tone and context as much as possible\n- For mixed-language text, leave parts in their most appropriate language rather than forcing translation\n- Do not translate code, technical identifiers, or untranslatable content - leave them as-is\n- For technical terms, consider providing English terms in parentheses when translating to Japanese for better readability\n- Respond with only the translated text, no explanations or additional comments",
+        prompt: `${text} /nothink`,
+        stream: false
+      }
       const response: Response = await fetch("http://localhost:11434/api/generate", {
         method: "post",
         headers: {
@@ -81,7 +81,7 @@ ${cleanedResponse}
         message: "結果を確認してください。"
       });
 
-    } catch (error){
+    } catch (error) {
       console.error('Translation error', error);
 
       showToast({
@@ -111,7 +111,7 @@ ${text}
   };
 
   // 結果があった場合の画面
-  if(translationResult) {
+  if (translationResult) {
     return (
       <Detail
         markdown={translationResult}
