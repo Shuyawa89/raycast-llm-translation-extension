@@ -6,8 +6,9 @@
  * @returns <think>タグが除去され、空白文字がトリムされた処理済み文字列
  */
 export function removeThinkTags(text: string): string {
-    return text.replace(/<think>[\s\S]*?<\/think>/g, '')  // <think>...</think>を除去
-    .trim();  // 前後の空白を除去
+  return text
+    .replace(/<think>[\s\S]*?<\/think>/g, "") // <think>...</think>を除去
+    .trim(); // 前後の空白を除去
 }
 
 /**
@@ -17,11 +18,9 @@ export function removeThinkTags(text: string): string {
  * @returns フォーマットされた処理時間文字列（例: "123ms"）。入力が未定義の場合は "不明" を返す
  */
 export function formatProcessingTime(nanoseconds?: number): string {
-    if (!nanoseconds) return '不明';
-    return Math.round(nanoseconds / 1000000) + 'ms';
+  if (!nanoseconds) return "不明";
+  return Math.round(nanoseconds / 1000000) + "ms";
 }
-
-
 
 /**
  * 翻訳結果とメタデータを含むマークダウン形式の文字列を生成する
@@ -34,14 +33,13 @@ export function formatProcessingTime(nanoseconds?: number): string {
  * @returns 翻訳結果とメタデータを含むフォーマットされたマークダウン文字列
  */
 export function generateResultMarkdown(
-    originalText: string,
-    translatedText: string,
-    direction: string,
-    model: string,
-    processingTime: string
-): string{
-    return (
-        `
+  originalText: string,
+  translatedText: string,
+  direction: string,
+  model: string,
+  processingTime: string,
+): string {
+  return `
 # 翻訳完了
 
 ## 元のテキスト
@@ -54,8 +52,7 @@ ${translatedText}
 - 翻訳方向: ${direction}
 - 使用モデル: ${model}
 - 処理時間: ${processingTime}
-        `
-    )
+        `;
 }
 
 /**l
@@ -65,12 +62,8 @@ ${translatedText}
  * @param originalText - 翻訳しようとした元のテキスト
  * @returns エラー情報、対処方法、元のテキストを含むフォーマットされたマークダウン文字列
  */
-export function generateErrorMarkdown(
-    errorMessage: string,
-    originalText: string
-): string {
-    return (
-        `
+export function generateErrorMarkdown(errorMessage: string, originalText: string): string {
+  return `
 # 翻訳エラー
 
 ## エラー内容
@@ -83,6 +76,5 @@ ${errorMessage}
 
 ## 元のテキスト
 ${originalText}
-      `
-    )
+      `;
 }

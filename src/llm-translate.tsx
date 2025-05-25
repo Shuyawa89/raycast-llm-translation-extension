@@ -1,7 +1,11 @@
 import { List, Action, ActionPanel, showToast, Toast, Detail } from "@raycast/api";
 import { useState } from "react";
-import { formatProcessingTime, generateErrorMarkdown, generateResultMarkdown, removeThinkTags } from "./utils/textProcessig";
-
+import {
+  formatProcessingTime,
+  generateErrorMarkdown,
+  generateResultMarkdown,
+  removeThinkTags,
+} from "./utils/textProcessig";
 
 interface OllamaResponse {
   model: string;
@@ -34,56 +38,63 @@ export default function Command() {
     showToast({
       style: Toast.Style.Animated,
       title: `${direction} 翻訳開始`,
-      message: `${text} を翻訳します`
+      message: `${text} を翻訳します`,
     });
 
     try {
       const requestData: TranslationRequest = {
         model: "qwen3:8b",
-        system: "You are a specialized translation AI. Your task is to translate between Japanese and English:\n- If the input text is in Japanese, translate it to English\n- If the input text is in English, translate it to Japanese\n- Maintain the original tone and context as much as possible\n- For mixed-language text, leave parts in their most appropriate language rather than forcing translation\n- Do not translate code, technical identifiers, or untranslatable content - leave them as-is\n- For technical terms, consider providing English terms in parentheses when translating to Japanese for better readability\n- Respond with only the translated text, no explanations or additional comments",
+        system:
+          "You are a specialized translation AI. Your task is to translate between Japanese and English:\n- If the input text is in Japanese, translate it to English\n- If the input text is in English, translate it to Japanese\n- Maintain the original tone and context as much as possible\n- For mixed-language text, leave parts in their most appropriate language rather than forcing translation\n- Do not translate code, technical identifiers, or untranslatable content - leave them as-is\n- For technical terms, consider providing English terms in parentheses when translating to Japanese for better readability\n- Respond with only the translated text, no explanations or additional comments",
         prompt: `${text} /nothink`,
-        stream: false
-      }
+        stream: false,
+      };
       const response: Response = await fetch("http://localhost:11434/api/generate", {
         method: "post",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(requestData)
+        body: JSON.stringify(requestData),
       });
 
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
-      const result: OllamaResponse = await response.json() as OllamaResponse; // 無理やり型を合わせてる
+      const result: OllamaResponse = (await response.json()) as OllamaResponse; // 無理やり型を合わせてる
 
       // 🧹 <think>タグを除去する処理を追加
       const cleanedResponse = removeThinkTags(result.response);
 
       // 翻訳結果をstateに保存する
-      setTranslationResult(generateResultMarkdown(text, cleanedResponse, direction, result.model, formatProcessingTime(result.total_duration)))
+      setTranslationResult(
+        generateResultMarkdown(
+          text,
+          cleanedResponse,
+          direction,
+          result.model,
+          formatProcessingTime(result.total_duration),
+        ),
+      );
 
       showToast({
         style: Toast.Style.Success,
         title: "翻訳完了!",
-        message: "結果を確認してください。"
+        message: "結果を確認してください。",
       });
-
     } catch (error: unknown) {
-      console.error('Translation error', error);
+      console.error("Translation error", error);
 
       const errorMessage: string = error instanceof Error ? error.message : String(error);
 
       showToast({
         style: Toast.Style.Failure,
         title: "翻訳エラー",
-        message: "Ollamaが正常に起動しているか確認してください。"
-      })
+        message: "Ollamaが正常に起動しているか確認してください。",
+      });
 
       setTranslationResult(generateErrorMarkdown(errorMessage, text));
-
     } finally {
       setIsLoading(false);
-    };
+    }
   };
 
   // 結果があった場合の画面
@@ -93,14 +104,11 @@ export default function Command() {
         markdown={translationResult}
         actions={
           <ActionPanel>
-            <Action
-              title="リストに戻る"
-              onAction={() => setTranslationResult(null)}
-            />
+            <Action title="リストに戻る" onAction={() => setTranslationResult(null)} />
           </ActionPanel>
         }
       />
-    )
+    );
   }
 
   return (
@@ -111,10 +119,7 @@ export default function Command() {
         icon="🇯🇵"
         actions={
           <ActionPanel>
-            <Action
-              title="翻訳実行"
-              onAction={() => handleTranslate("日英", "こんにちは")}
-            />
+            <Action title="翻訳実行" onAction={() => handleTranslate("日英", "こんにちは")} />
           </ActionPanel>
         }
       />
@@ -124,10 +129,7 @@ export default function Command() {
         icon="🇺🇸"
         actions={
           <ActionPanel>
-            <Action
-              title="翻訳実行"
-              onAction={() => handleTranslate("英日", "Hello")}
-            />
+            <Action title="翻訳実行" onAction={() => handleTranslate("英日", "Hello")} />
           </ActionPanel>
         }
       />
