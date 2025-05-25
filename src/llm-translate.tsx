@@ -1,5 +1,6 @@
 import { List, Action, ActionPanel, showToast, Toast, Detail } from "@raycast/api";
 import { useState } from "react";
+import { removeThinkTags } from "./utils/textProcessig";
 
 
 interface OllamaResponse {
@@ -56,9 +57,7 @@ export default function Command() {
       const result: OllamaResponse = await response.json() as OllamaResponse; // 無理やり型を合わせてる
 
       // 🧹 <think>タグを除去する処理を追加
-      const cleanedResponse = result.response
-        .replace(/<think>[\s\S]*?<\/think>/g, '')  // <think>...</think>を除去
-        .trim();  // 前後の空白を除去
+      const cleanedResponse = removeThinkTags(result.response);
 
       // 翻訳結果をstateに保存する
       setTranslationResult(`
