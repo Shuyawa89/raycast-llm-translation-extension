@@ -1,6 +1,6 @@
 import { List, Action, ActionPanel, showToast, Toast, Detail } from "@raycast/api";
 import { useState } from "react";
-import { removeThinkTags } from "./utils/textProcessig";
+import { formatProcessingTime, removeThinkTags } from "./utils/textProcessig";
 
 
 interface OllamaResponse {
@@ -72,7 +72,7 @@ ${cleanedResponse}
 ## 情報
 - 翻訳方向: ${direction}
 - 使用モデル: ${result.model}
-- 処理時間: ${result.total_duration ? Math.round(result.total_duration / 1000000) + 'ms' : '不明'}
+- 処理時間: ${formatProcessingTime(result.total_duration)}
         `);
       showToast({
         style: Toast.Style.Success,
