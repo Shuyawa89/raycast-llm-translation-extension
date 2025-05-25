@@ -1,6 +1,6 @@
 import { List, Action, ActionPanel, showToast, Toast, Detail } from "@raycast/api";
 import { useState } from "react";
-import { formatProcessingTime, removeThinkTags } from "./utils/textProcessig";
+import { formatProcessingTime, generateResultMarkdown, removeThinkTags } from "./utils/textProcessig";
 
 
 interface OllamaResponse {
@@ -60,20 +60,8 @@ export default function Command() {
       const cleanedResponse = removeThinkTags(result.response);
 
       // 翻訳結果をstateに保存する
-      setTranslationResult(`
-# 翻訳完了
+      setTranslationResult(generateResultMarkdown(text, cleanedResponse, direction, result.model, formatProcessingTime(result.total_duration)))
 
-## 元のテキスト
-${text}
-
-## 翻訳結果
-${cleanedResponse}
-
-## 情報
-- 翻訳方向: ${direction}
-- 使用モデル: ${result.model}
-- 処理時間: ${formatProcessingTime(result.total_duration)}
-        `);
       showToast({
         style: Toast.Style.Success,
         title: "翻訳完了!",
