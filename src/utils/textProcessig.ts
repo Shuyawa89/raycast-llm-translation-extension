@@ -116,3 +116,19 @@ ${errorMessage}
 ${originalText}
       `;
 }
+
+/**
+ * システムプロンプトを生成
+ * @returns 日本語と英語を翻訳するための指示プロンプトの文字列
+ */
+export function createTranslationSystemPrompt(): string {
+  return `You are a specialized translation AI. Your task is to translate between Japanese and English:
+
+- If the input text is in Japanese, translate it to English
+- If the input text is in English, translate it to Japanese
+- Maintain the original tone and context as much as possible
+- For mixed-language text, leave parts in their most appropriate language rather than forcing translation
+- Do not translate code, technical identifiers, or untranslatable content - leave them as-is
+- For technical terms, consider providing English terms in parentheses when translating to Japanese for better readability
+- Respond with only the translated text, no explanations or additional comments`;
+}
