@@ -7,13 +7,27 @@ const DEFAULT_CONFIG: ApiConfig = {
   apiKey: "API_KEY", // オンラインLLM使用時のAPI Key
 };
 
+/**
+ * 翻訳APIクライアントクラス
+ * OllamaやOpenAI互換APIへのリクエストを管理する
+ */
 class TranslationApiClient {
   private config: ApiConfig;
 
+  /**
+   * コンストラクタ
+   * @param config - API設定（省略時はデフォルト設定を使用）
+   */
   constructor(config: ApiConfig = DEFAULT_CONFIG) {
     this.config = config;
   }
 
+  /**
+   * チャット補完APIを呼び出し、翻訳結果を取得する
+   * @param messages - チャットメッセージ配列（翻訳指示やユーザー入力など）
+   * @returns ChatCompletionResponse型のAPIレスポンス
+   * @throws APIエラー時は例外をスロー
+   */
   async createChatCompletion(messages: ChatMessage[]): Promise<ChatCompletionResponse> {
     const requestData: ChatCompletionRequest = {
       model: this.config.model,
@@ -45,10 +59,18 @@ class TranslationApiClient {
     return (await response.json()) as ChatCompletionResponse;
   }
 
+  /**
+   * 設定を更新する
+   * @param newConfig - 変更したい設定項目（部分的に指定可能）
+   */
   updateConfig(newConfig: Partial<ApiConfig>): void {
     this.config = {...this.config, ...newConfig };
   }
 
+  /**
+   * 現在の設定を取得する
+   * @returns 現在のApiConfigオブジェクト
+   */
   getConfig(): ApiConfig {
     return { ...this.config };
   }
