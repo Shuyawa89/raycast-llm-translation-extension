@@ -57,3 +57,32 @@ ${translatedText}
         `
     )
 }
+
+/**l
+ * 翻訳エラーが発生した際のマークダウン形式のエラーメッセージを生成する
+ *
+ * @param errorMessage - 発生したエラーの詳細メッセージ
+ * @param originalText - 翻訳しようとした元のテキスト
+ * @returns エラー情報、対処方法、元のテキストを含むフォーマットされたマークダウン文字列
+ */
+export function generateErrorMarkdown(
+    errorMessage: string,
+    originalText: string
+): string {
+    return (
+        `
+# 翻訳エラー
+
+## エラー内容
+${errorMessage}
+
+## 対処方法
+1. Ollamaが起動しているか確認: \`ollama serve\`
+2. Qwen3:8bモデルがインストールされているか確認
+3. ネットワーク接続を確認
+
+## 元のテキスト
+${originalText}
+      `
+    )
+}

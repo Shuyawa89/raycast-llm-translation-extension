@@ -1,6 +1,6 @@
 import { List, Action, ActionPanel, showToast, Toast, Detail } from "@raycast/api";
 import { useState } from "react";
-import { formatProcessingTime, generateResultMarkdown, removeThinkTags } from "./utils/textProcessig";
+import { formatProcessingTime, generateErrorMarkdown, generateResultMarkdown, removeThinkTags } from "./utils/textProcessig";
 
 
 interface OllamaResponse {
@@ -68,8 +68,10 @@ export default function Command() {
         message: "結果を確認してください。"
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Translation error', error);
+
+      const errorMessage: string = error instanceof Error ? error.message : String(error);
 
       showToast({
         style: Toast.Style.Failure,
@@ -77,20 +79,7 @@ export default function Command() {
         message: "Ollamaが正常に起動しているか確認してください。"
       })
 
-      setTranslationResult(`
-# 翻訳エラー
-
-## エラー内容
-${error}
-
-## 対処方法
-1. Ollamaが起動しているか確認: \`ollama serve\`
-2. Qwen3:8bモデルがインストールされているか確認
-3. ネットワーク接続を確認
-
-## 元のテキスト
-${text}
-      `);
+      setTranslationResult(generateErrorMarkdown(errorMessage, text));
 
     } finally {
       setIsLoading(false);
