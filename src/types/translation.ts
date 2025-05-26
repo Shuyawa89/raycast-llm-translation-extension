@@ -34,7 +34,7 @@ export interface ChatCompletionResponse {
   object: string;
   created: number;
   model: string;
-  choices: {
+  choices: {  // 配列で帰ってくるが通常は一件のみ
     index: number;
     message: {
       role: string;

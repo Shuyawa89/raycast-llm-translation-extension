@@ -87,6 +87,7 @@ const apiClient = new TranslationApiClient();
  * @returns Promise<ChatCompletionResponse> 翻訳結果（OpenAI形式のレスポンス）
  */
 export async function translateText(text: string): Promise<ChatCompletionResponse> {
+  // システムプロンプトと翻訳対象テキストを配列にまとめておく
   const messages: ChatMessage[] = [
     {
       role: 'system',
