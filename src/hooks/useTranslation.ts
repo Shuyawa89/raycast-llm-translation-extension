@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { showToast, Toast } from '@raycast/api';
 import { translateText } from '../services/translationApi';
 import {
-  cleanThinkTags,
+  removeThinkTags,
   formatTokenUseage,
   generateErrorMarkdown,
   generateResultMarkdown
@@ -47,7 +47,7 @@ export function useTranslation() {
       const processingTime = Date.now() - startTime;
 
       const translatedText = result.choices[0]?.message?.content || '';
-      const cleanedResponse = cleanThinkTags(translatedText);
+      const cleanedResponse = removeThinkTags(translatedText);
       const tokenUseage = formatTokenUseage(result.usage ? {
         promptTokens: result.usage.prompt_tokens,
         completionTokens: result.usage.completion_tokens,
