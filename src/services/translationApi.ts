@@ -75,3 +75,68 @@ class TranslationApiClient {
     return { ...this.config };
   }
 }
+
+// シングルトンインスタンス
+const apiClient = new TranslationApiClient();
+
+/**
+ * テキストを翻訳する
+ * システムプロンプトとユーザー入力を組み合わせてAPIへリクエストし、翻訳結果を取得する
+ *
+ * @param text 翻訳対象のテキスト
+ * @returns Promise<ChatCompletionResponse> 翻訳結果（OpenAI形式のレスポンス）
+ */
+export async function translateText(text: string): Promise<ChatCompletionResponse> {
+  const messages: ChatMessage[] = [
+    {
+      role: 'system',
+      content: createTranslationSystemPrompt()
+    },
+    {
+      role: 'user',
+      content: text
+    }
+  ];
+
+  return await apiClient.createChatCompletion(messages);
+}
+
+/**
+ * APIサーバーとの接続確認を行う
+ * Ollamaの場合はローカルサーバーの疎通確認を行う
+ *
+ * @returns Promise<boolean> 接続できればtrue、失敗した場合はfalse
+ */
+export async function checkApiConnection(): Promise<boolean> {
+  try {
+    const config = apiClient.getConfig();
+
+    if (config.baseUrl.includes('localhost:11434')) {
+      const response = await fetch('http://localhost:11434/api/tags');
+      return response.ok;
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * API設定を更新する
+ *
+ * @param config 変更したい設定項目（部分的に指定可能）
+ */
+export function setApiConfig(config: Partial<ApiConfig>): void {
+  apiClient.updateConfig(config);
+}
+
+/**
+ * 現在のAPI設定を取得する
+ *
+ * @returns ApiConfig 現在の設定内容
+ */
+export function getApiConfig(): ApiConfig {
+  return apiClient.getConfig();
+}
+
