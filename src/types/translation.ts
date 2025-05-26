@@ -38,7 +38,7 @@ export interface ChatCompletionResponse {
     index: number;
     message: {
       role: string;
-      conent: string;
+      content: string;
     };
     finish_reason: string;
   }[];
