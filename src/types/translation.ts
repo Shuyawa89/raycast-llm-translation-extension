@@ -12,11 +12,54 @@ export interface OllamaResponse {
   eval_duration?: number;
 }
 
-export interface TranslationRequest {
+// OpenAI形式のチャットメッセージ
+export interface ChatMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}
+
+// OpenAI形式のレスポンス形式
+export interface ChatCompletionRequest {
   model: string;
-  system: string;
-  prompt: string;
-  stream: boolean;
+  messages: ChatMessage[];
+  stream?: boolean;
+  temperature?: number;
+  max_tokens?: number;
+  top_p?: number;
+}
+
+// OpenAIのレスポンス形式
+export interface ChatCompletionResponse {
+  id: string;
+  object: string;
+  created: number;
+  model: string;
+  choices: {  // 配列で帰ってくるが通常は一件のみ
+    index: number;
+    message: {
+      role: string;
+      content: string;
+    };
+    finish_reason: string;
+  }[];
+  usage?: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
+}
+
+export interface TranslationRequest {
+  originalText: string;
+  translatedText: string;
+  direction: TranslationDirection;
+  model: string;
+  processingTime?: string;
+  tokenUseage?: {
+    promptTokens: string;
+    completionTokens: number;
+    totalTokens: number;
+  };
 }
 
 export type TranslationDirection = "日英" | "英日" | "自動判定";
@@ -33,4 +76,10 @@ export interface TranslationError {
   message: string;
   originalText: string;
   suggestions: string[];
+}
+
+export interface ApiConfig {
+  baseUrl: string;
+  model: string;
+  apiKey?: string;
 }
