@@ -45,7 +45,8 @@ class TranslationApiClient {
       headers["Authorization"] = `Bearer ${this.config.apiKey}`;
     }
 
-    const response = await fetch(`${this.config.baseUrl}/chat/completions`, {
+    const requestUrl = `${this.config.baseUrl}/chat/completions`;
+    const response = await fetch(requestUrl, {
       method: "POST",
       headers,
       body: JSON.stringify(requestData),
@@ -113,7 +114,8 @@ export async function checkApiConnection(): Promise<boolean> {
     const config = apiClient.getConfig();
 
     if (config.baseUrl.includes('localhost:11434')) {
-      const response = await fetch('http://localhost:11434/api/tags');
+      const healthCheckUrl = `${config.baseUrl}/api/tags`;
+      const response = await fetch(healthCheckUrl);
       return response.ok;
     }
 
