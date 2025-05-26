@@ -34,7 +34,7 @@ export function formatProcessingTime(nanoseconds?: number): string {
  * @param usage.totalTokens - 使用されたトークンの総数
  * @returns トークン使用量を表示するフォーマットされた日本語文字列、usageが未定義の場合は "トークン情報なし" を返す
  */
-export function formatTokenUseage(usage?: {
+export function formatTokenUsage(usage?: {
   promptTokens: number;
   completionTokens: number;
   totalTokens: number;
@@ -43,16 +43,6 @@ export function formatTokenUseage(usage?: {
   return `入力: ${usage.promptTokens}, 出力: ${usage.completionTokens}, 合計: ${usage.totalTokens}`;
 }
 
-/**
- * 翻訳結果とメタデータを含むマークダウン形式の文字列を生成する
- *
- * @param originalText - 翻訳される元のテキスト
- * @param translatedText - 翻訳結果のテキスト
- * @param direction - 翻訳方向（例: "英語から日本語"）
- * @param model - 使用された翻訳モデルの名前または識別子
- * @param processingTime - 翻訳処理にかかった時間
- * @returns 翻訳結果とメタデータを含むフォーマットされたマークダウン文字列
- */
 /**
  * 翻訳結果をMarkdown形式で生成する
  *
