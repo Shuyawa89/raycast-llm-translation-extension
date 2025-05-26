@@ -51,7 +51,7 @@ export function formatTokenUsage(usage?: {
  * @param direction - 翻訳方向（例：en-ja, ja-en など）
  * @param model - 使用した翻訳モデル名
  * @param processingTime - 翻訳処理にかかった時間
- * @param tokenUseage - トークンの使用量（オプショナル）
+ * @param tokenUsage - トークンの使用量（オプショナル）
  * @returns 翻訳結果の情報を含むMarkdown形式の文字列
  */
 export function generateResultMarkdown(
@@ -60,7 +60,7 @@ export function generateResultMarkdown(
   direction: TranslationDirection,
   model: string,
   processingTime: string,
-  tokenUseage?: string,
+  tokenUsage?: string,
 ): string {
   return `
 # 翻訳完了
@@ -75,7 +75,7 @@ ${translatedText}
 - 翻訳方向: ${direction}
 - 使用モデル: ${model}
 - 処理時間: ${processingTime || "不明"}
-- トークン使用量: ${tokenUseage || "不明"}
+- トークン使用量: ${tokenUsage || "不明"}
         `;
 }
 

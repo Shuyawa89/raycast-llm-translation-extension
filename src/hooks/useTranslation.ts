@@ -48,7 +48,7 @@ export function useTranslation() {
 
       const translatedText = result.choices[0]?.message?.content || '';
       const cleanedResponse = removeThinkTags(translatedText);
-      const tokenUseage = formatTokenUsage(result.usage ? {
+      const tokenUsage = formatTokenUsage(result.usage ? {
         promptTokens: result.usage.prompt_tokens,
         completionTokens: result.usage.completion_tokens,
         totalTokens: result.usage.total_tokens
@@ -61,7 +61,7 @@ export function useTranslation() {
         direction,
         result.model,
         `${processingTime}ms`,
-        tokenUseage
+        tokenUsage
       );
 
       setTranslationResult(markdown);

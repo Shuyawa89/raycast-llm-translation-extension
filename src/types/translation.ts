@@ -55,7 +55,7 @@ export interface TranslationRequest {
   direction: TranslationDirection;
   model: string;
   processingTime?: string;
-  tokenUseage?: {
+  tokenUsage?: {
     promptTokens: string;
     completionTokens: number;
     totalTokens: number;
