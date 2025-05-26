@@ -8,8 +8,8 @@
   "license": "MIT",
   "commands": [
     {
-      "name": "llm-translate",
-      "title": "llm-translate",
+      "name": "llmTranslate",
+      "title": "llmTranslate",
       "description": "",
       "mode": "view"
     }
