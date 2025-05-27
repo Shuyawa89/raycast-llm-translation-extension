@@ -6,7 +6,7 @@ import {
   formatTokenUsage,
   generateErrorMarkdown,
   generateResultMarkdown
-} from '../utils/textProcessig'
+} from '../utils/textProcessing'
 import { TranslationDirection } from '../types/translation';
 
 /**
