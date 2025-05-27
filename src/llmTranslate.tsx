@@ -19,8 +19,6 @@ export default function Command() {
     );
   }
 
-  const selectedText = getSelectedTextSafely();
-
   return (
     <List isLoading={isLoading}>
       <List.Item
@@ -50,6 +48,7 @@ export default function Command() {
         actions={
           <ActionPanel>
             <Action title="翻訳実行" onAction={async () => {
+              const selectedText = getSelectedTextSafely();
               const text = await selectedText;
               handleTranslate("自動判定", text || "")
               }
