@@ -83,3 +83,11 @@ export interface ApiConfig {
   model: string;
   apiKey?: string;
 }
+
+export interface TranslationAction {
+  id: string;
+  title: string;
+  subtitle: string;
+  icon: string;
+  types: 'selected-text-input' | 'manual-input';
+}
