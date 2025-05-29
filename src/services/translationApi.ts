@@ -1,5 +1,5 @@
 import { ChatCompletionRequest, ChatCompletionResponse, ApiConfig, ChatMessage } from "../types/translation";
-import { createTranslationSystemPrompt } from "../utils/textProcessig";
+import { createTranslationSystemPrompt } from "../utils/textProcessing";
 
 const DEFAULT_CONFIG: ApiConfig = {
   baseUrl: "http://localhost:11434/v1", // Ollama OpenAI互換エンドポイント
