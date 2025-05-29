@@ -21,6 +21,7 @@ import { TranslationDirection } from '../types/translation';
 export function useTranslation() {
   const [translationResult, setTranslationResult] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isInputForm, setIsInputForm] = useState<boolean>(false);
 
   /**
    * 翻訳処理を実行する
@@ -93,10 +94,21 @@ export function useTranslation() {
     setTranslationResult(null);
   };
 
+  const showManualInput = (): void => {
+    setIsInputForm(true);
+  };
+
+  const hideManualInput = (): void => {
+    setIsInputForm(false);
+  }
+
   return {
     translationResult,
     isLoading,
+    isInputForm,
     handleTranslate,
-    resetTranslation
+    resetTranslation,
+    showManualInput,
+    hideManualInput
   };
 }
