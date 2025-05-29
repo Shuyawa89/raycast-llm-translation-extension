@@ -1,6 +1,7 @@
 import { List, Action, ActionPanel, Detail } from "@raycast/api";
 import { useTranslation } from "./hooks/useTranslation";
 import { getSelectedTextSafely } from "./utils/selectedTextUtils";
+import { TRANSLATION_ACTIONS } from "./utils/translationActions";
 
 export default function Command() {
   const { translationResult, isLoading, handleTranslate, resetTranslation } = useTranslation();
@@ -21,43 +22,30 @@ export default function Command() {
 
   return (
     <List isLoading={isLoading}>
-      <List.Item
-        title="日本語→英語"
-        subtitle="こんにちは→Hello"
-        icon="🇯🇵"
-        actions={
-          <ActionPanel>
-            <Action title="翻訳実行" onAction={() => handleTranslate("日英", "こんにちは、はじめまして")} />
-          </ActionPanel>
-        }
-      />
-      <List.Item
-        title="英語→日本語"
-        subtitle="Hello→こんにちは"
-        icon="🇺🇸"
-        actions={
-          <ActionPanel>
-            <Action title="翻訳実行" onAction={() => handleTranslate("英日", "Hello, nice to meet you")} />
-          </ActionPanel>
-        }
-      />
-      <List.Item
-        title="選択テキスト翻訳"
-        subtitle="自動翻訳です"
-        icon="😃"
-        actions={
-          <ActionPanel>
-            <Action
-              title="翻訳実行"
-              onAction={async () => {
-                const selectedText = getSelectedTextSafely();
-                const text = await selectedText;
-                handleTranslate("自動判定", text || "");
-              }}
-            />
-          </ActionPanel>
-        }
-      />
+      {TRANSLATION_ACTIONS.map((action) => (
+        <List.Item
+          key={action.id}
+          title={action.title}
+          subtitle={action.subtitle}
+          icon={action.icon}
+          actions={
+            <ActionPanel>
+              <Action
+                title="翻訳実行"
+                onAction={async () => {
+                  if (action.type === 'selected-text') {
+                    const selectedText = getSelectedTextSafely();
+                    const text = await selectedText;
+                    handleTranslate("自動判定", text || "");
+                  } else if (action.type === 'manual-text') {
+                    // TODO: 手動入力の場合の処理
+                  }
+                }}
+              />
+            </ActionPanel>
+          }
+        />
+      ))}
     </List>
   );
 }
