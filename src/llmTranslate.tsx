@@ -5,7 +5,15 @@ import { TRANSLATION_ACTIONS } from "./utils/translationActions";
 import { ManualInputForm } from "./components/ManualInputForm";
 
 export default function Command() {
-  const { translationResult, isLoading, isInputForm, handleTranslate, resetTranslation, showManualInput, hideManualInput } = useTranslation();
+  const {
+    translationResult,
+    isLoading,
+    isInputForm,
+    handleTranslate,
+    resetTranslation,
+    showManualInput,
+    hideManualInput,
+  } = useTranslation();
 
   // 結果があった場合の画面
   if (translationResult) {
@@ -25,15 +33,14 @@ export default function Command() {
     return (
       <ManualInputForm
         onSubmit={(text: string) => {
-          handleTranslate("自動判定", text);  //翻訳実行
+          handleTranslate("自動判定", text); //翻訳実行
           hideManualInput();
         }}
         onCancel={() => {
           hideManualInput();
         }}
       />
-    )
-
+    );
   }
   return (
     <List isLoading={isLoading}>
@@ -48,11 +55,11 @@ export default function Command() {
               <Action
                 title="翻訳実行"
                 onAction={async () => {
-                  if (action.type === 'selected-text') {
+                  if (action.type === "selected-text") {
                     const selectedText = getSelectedTextSafely();
                     const text = await selectedText;
                     handleTranslate("自動判定", text || "");
-                  } else if (action.type === 'manual-text') {
+                  } else if (action.type === "manual-text") {
                     showManualInput(); // 入力フォームを表示
                   }
                 }}

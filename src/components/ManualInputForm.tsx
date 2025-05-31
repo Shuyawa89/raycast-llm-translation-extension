@@ -6,7 +6,7 @@ interface ManualInputFormProps {
   onCancel: () => void;
 }
 
-export function ManualInputForm({onSubmit, onCancel}: ManualInputFormProps) {
+export function ManualInputForm({ onSubmit, onCancel }: ManualInputFormProps) {
   const [inputText, setInputText] = useState<string>("");
 
   return (
@@ -33,5 +33,5 @@ export function ManualInputForm({onSubmit, onCancel}: ManualInputFormProps) {
         onChange={setInputText}
       />
     </Form>
-  )
+  );
 }

@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { showToast, Toast } from '@raycast/api';
-import { translateText } from '../services/translationApi';
+import { useState } from "react";
+import { showToast, Toast } from "@raycast/api";
+import { translateText } from "../services/translationApi";
 import {
   removeThinkTags,
   formatTokenUsage,
   generateErrorMarkdown,
-  generateResultMarkdown
-} from '../utils/textProcessing'
-import { TranslationDirection } from '../types/translation';
+  generateResultMarkdown,
+} from "../utils/textProcessing";
+import { TranslationDirection } from "../types/translation";
 
 /**
  * 翻訳処理用のカスタムフック
@@ -39,7 +39,7 @@ export function useTranslation() {
     showToast({
       style: Toast.Style.Animated,
       title: `${direction} 翻訳中...`,
-      message: `"${text}" を処理しています`
+      message: `"${text}" を処理しています`,
     });
 
     // LLMに流して、データを取得する
@@ -47,13 +47,17 @@ export function useTranslation() {
       const result = await translateText(text); //翻訳結果を取得
       const processingTime = Date.now() - startTime;
 
-      const translatedText = result.choices[0]?.message?.content || '';
+      const translatedText = result.choices[0]?.message?.content || "";
       const cleanedResponse = removeThinkTags(translatedText);
-      const tokenUsage = formatTokenUsage(result.usage ? {
-        promptTokens: result.usage.prompt_tokens,
-        completionTokens: result.usage.completion_tokens,
-        totalTokens: result.usage.total_tokens
-      } : undefined);
+      const tokenUsage = formatTokenUsage(
+        result.usage
+          ? {
+              promptTokens: result.usage.prompt_tokens,
+              completionTokens: result.usage.completion_tokens,
+              totalTokens: result.usage.total_tokens,
+            }
+          : undefined,
+      );
 
       // 結果markdown作成
       const markdown = generateResultMarkdown(
@@ -62,7 +66,7 @@ export function useTranslation() {
         direction,
         result.model,
         `${processingTime}ms`,
-        tokenUsage
+        tokenUsage,
       );
 
       setTranslationResult(markdown);
@@ -70,17 +74,17 @@ export function useTranslation() {
       showToast({
         style: Toast.Style.Success,
         title: "翻訳完了",
-        message: "結果を確認してください"
+        message: "結果を確認してください",
       });
     } catch (error: unknown) {
-      console.error('Translation error', error);
+      console.error("Translation error", error);
 
       const errorMessage = error instanceof Error ? error.message : String(error);
 
       showToast({
         style: Toast.Style.Failure,
         title: "翻訳エラー",
-        message: "API接続を確認してください"
+        message: "API接続を確認してください",
       });
 
       const errorMarkDown = generateErrorMarkdown(errorMessage, text);
@@ -100,7 +104,7 @@ export function useTranslation() {
 
   const hideManualInput = (): void => {
     setIsInputForm(false);
-  }
+  };
 
   return {
     translationResult,
@@ -109,6 +113,6 @@ export function useTranslation() {
     handleTranslate,
     resetTranslation,
     showManualInput,
-    hideManualInput
+    hideManualInput,
   };
 }
