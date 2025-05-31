@@ -13,6 +13,6 @@ export const TRANSLATION_ACTIONS: TranslationAction[] = [
     title: '手動入力翻訳',
     subtitle: '手動で入力した内容を翻訳します',
     icon: '✏️',
-    type: 'manual-text' as const
+    type: 'manual-input' as const
   }
 ];

@@ -27,7 +27,7 @@ export function TranslationActionList({isLoading, onTranslate, onShowManualInput
                       const selectedText = getSelectedTextSafely();
                       const text = await selectedText;
                       onTranslate("自動判定", text || "");
-                    } else if (action.type === "manual-text") {
+                    } else if (action.type === "manual-input") {
                       onShowManualInput(); // 入力フォームを表示
                     }
                   }}

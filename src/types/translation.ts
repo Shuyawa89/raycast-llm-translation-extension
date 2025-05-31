@@ -89,5 +89,5 @@ export interface TranslationAction {
   title: string;
   subtitle: string;
   icon: string;
-  type: 'selected-text' | 'manual-text';
+  type: 'selected-text' | 'manual-input';
 }
