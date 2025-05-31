@@ -2,9 +2,10 @@ import { List, Action, ActionPanel, Detail } from "@raycast/api";
 import { useTranslation } from "./hooks/useTranslation";
 import { getSelectedTextSafely } from "./utils/selectedTextUtils";
 import { TRANSLATION_ACTIONS } from "./utils/translationActions";
+import { ManualInputForm } from "./components/ManualInputForm";
 
 export default function Command() {
-  const { translationResult, isLoading, handleTranslate, resetTranslation } = useTranslation();
+  const { translationResult, isLoading, isInputForm, handleTranslate, resetTranslation, showManualInput, hideManualInput } = useTranslation();
 
   // 結果があった場合の画面
   if (translationResult) {
@@ -20,6 +21,20 @@ export default function Command() {
     );
   }
 
+  if (isInputForm) {
+    return (
+      <ManualInputForm
+        onSubmit={(text: string) => {
+          handleTranslate("自動判定", text);  //翻訳実行
+          hideManualInput();
+        }}
+        onCancel={() => {
+          hideManualInput();
+        }}
+      />
+    )
+
+  }
   return (
     <List isLoading={isLoading}>
       {TRANSLATION_ACTIONS.map((action) => (
@@ -38,7 +53,7 @@ export default function Command() {
                     const text = await selectedText;
                     handleTranslate("自動判定", text || "");
                   } else if (action.type === 'manual-text') {
-                    // TODO: 手動入力の場合の処理
+                    showManualInput(); // 入力フォームを表示
                   }
                 }}
               />
