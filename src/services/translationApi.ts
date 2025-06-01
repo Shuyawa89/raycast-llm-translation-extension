@@ -34,7 +34,7 @@ class TranslationApiClient {
       messages,
       stream: false,
       temperature: 0.1,
-      max_tokens: 1000,
+      max_tokens: 10000,
     };
 
     const headers: Record<string, string> = {
@@ -96,7 +96,7 @@ export async function translateText(text: string): Promise<ChatCompletionRespons
     },
     {
       role: 'user',
-      content: text
+      content: text + " /nothink"
     }
   ];
 
