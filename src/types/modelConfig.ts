@@ -6,6 +6,7 @@ export interface PresetModel {
   name: string;
   provider: string;
   description: string;
+  baseUrl: string;
   modelName: string;
   requiresApiKey: boolean;
   category: "local" | "cloud";

@@ -6,6 +6,7 @@ export const PRESET_MODELS: PresetModel[] = [
     name: "Qwen3 8B",
     provider: "Ollama",
     description: "Qwen3 8B",
+    baseUrl: "http://localhost:11434/v1",
     modelName: "qwen3:8b",
     requiresApiKey: false,
     category: "local",
@@ -13,19 +14,23 @@ export const PRESET_MODELS: PresetModel[] = [
   {
     id: "openai-gpt4.1-mini",
     name: "GPT4.1-mini",
-    provider: "OpenAI",
+    provider: "OpenAi",
     description: "バランスのいい性能、コストパフォーマンス・有料",
-    modelName: "gpt-4.1-mini-2025-04-14",
+    baseUrl: "https://openrouter.ai/api/v1",
+    modelName: "openai/gpt-4.1-mini",
     requiresApiKey: true,
     category: "cloud",
   },
   {
     id: "google-gemini-2.0-flash",
     name: "gemini-2.0-flash",
-    provider: "OpenRouter",
+    provider: "Google",
     description: "バランスのいい性能、応答性・無料",
+    baseUrl: "https://openrouter.ai/api/v1",
     modelName: "google/gemini-2.0-flash-exp:free",
     requiresApiKey: true,
     category: "cloud",
   },
 ];
+
+export const DEFAULT_MODEL_ID = "ollama-qwen3";
