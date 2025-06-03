@@ -1,5 +1,9 @@
 import { PresetModel } from "../types/modelConfig";
 
+/**
+ * プリセットモデル定義
+ * 利用可能な事前定義済みモデルのリスト
+ */
 export const PRESET_MODELS: PresetModel[] = [
   {
     id: "ollama-qwen3",
@@ -33,4 +37,8 @@ export const PRESET_MODELS: PresetModel[] = [
   },
 ];
 
+/**
+ * デフォルトモデルID
+ * 初回利用時または設定がない場合に使用されるモデル
+ */
 export const DEFAULT_MODEL_ID = "ollama-qwen3";
