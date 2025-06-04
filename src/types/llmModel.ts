@@ -23,7 +23,7 @@ export interface LlmModel {
  * @property models 利用可能なLLMモデルの配列
  * @property defaultModelId デフォルトで使用するモデルID
  */
-export interface UserConfig{
+export interface UserConfig {
   models: LlmModel[];
   defaultModelId: string;
 }
@@ -33,10 +33,11 @@ export interface UserConfig{
  * @property success 操作が成功したかどうか
  * @property error 失敗時のエラーメッセージ
  */
-export type OperationResult = {
-  success: true;
-} | {
-  success: false;
-  error: string;
-};
-
+export type OperationResult =
+  | {
+      success: true;
+    }
+  | {
+      success: false;
+      error: string;
+    };
