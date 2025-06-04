@@ -23,12 +23,11 @@ export class ConfigStorage {
    * @returns 操作結果
    */
   static async saveConfig(config: UserConfig): Promise<ModelOperationResult> {
-    // TODO: LocalStorage.setItemを使ってJSON形式で保存
     try {
       await LocalStorage.setItem(STORAGE_KEYS.USER_CONFIG, JSON.stringify(config));
-      return {success: true}
+      return { success: true };
     } catch (error) {
-      return {success: false, error: error instanceof Error ? error.message : String(error)};
+      return { success: false, error: error instanceof Error ? error.message : String(error) };
     }
   }
 
@@ -37,9 +36,6 @@ export class ConfigStorage {
    * @returns ユーザー設定（存在しない場合はデフォルト設定）
    */
   static async loadConfig(): Promise<UserConfig> {
-    // TODO: LocalStorage.getItemで設定を読み込み
-    // 存在しない場合はデフォルト設定を返す
-    // try-catchでエラーハンドリング
     try {
       const configJson = await LocalStorage.getItem<string>(STORAGE_KEYS.USER_CONFIG);
       if (configJson) {
@@ -49,10 +45,11 @@ export class ConfigStorage {
       console.error("設定読み込みエラー", error);
     }
 
+    // 存在しない場合はデフォルト値を返すようにする
     return {
       models: {},
       customModels: [],
-      defaultModelId: DEFAULT_MODEL_ID
+      defaultModelId: DEFAULT_MODEL_ID,
     };
   }
 
@@ -63,8 +60,10 @@ export class ConfigStorage {
    * @returns 操作結果
    */
   static async saveModelConfig(modelId: string, modelConfig: ModelConfig): Promise<ModelOperationResult> {
-    // TODO: 現在の設定を読み込んで、指定モデルの設定を更新後、全体を保存
+    const currentUserConfig = await this.loadConfig();  // 現在のユーザ設定を読み込む
+    currentUserConfig.models[modelId] = modelConfig;  // 更新対象のモデルを更新
 
+    return await this.saveConfig(currentUserConfig);
   }
 
   /**
@@ -73,7 +72,13 @@ export class ConfigStorage {
    * @returns モデル設定（存在しない場合は未設定状態）
    */
   static async loadModelConfig(modelId: string): Promise<ModelConfig> {
-    // TODO: ユーザー設定を読み込んで、指定モデルの設定を返す
+    const userConfig = await this.loadConfig();
+    return (
+      userConfig.models[modelId] || {
+        modelId: modelId,
+        isConfigured: false,
+      }
+    );
   }
 
   /**
