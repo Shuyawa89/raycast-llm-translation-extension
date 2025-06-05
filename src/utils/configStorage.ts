@@ -1,4 +1,4 @@
-import { OperationResult, UserConfig } from "../types/llmModel";
+import { LlmModel, OperationResult, UserConfig } from "../types/llmModel";
 import { LocalStorage } from "@raycast/api";
 import { DEFAULT_MODEL_ID, DEFAULT_MODELS } from "./llmModelDefinitions";
 
@@ -13,7 +13,7 @@ export class ConfigStorage {
 
   static async loadUserConfig(): Promise<UserConfig> {
     try {
-      const userData = await LocalStorage.getItem<string>(USER_CONFIG_KEY)
+      const userData = await LocalStorage.getItem<string>(USER_CONFIG_KEY);
       if (!userData) {
         return this.getDefaultUserConfig();
       }
@@ -26,15 +26,39 @@ export class ConfigStorage {
   }
 
   static async saveUserConfig(config: UserConfig): Promise<OperationResult> {
-    try{
+    try {
       await LocalStorage.setItem(USER_CONFIG_KEY, JSON.stringify(config));
       return {
-        success: true
+        success: true,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
+
+  static async addModel(model: LlmModel): Promise<OperationResult> {
+    try {
+      const currentUserConfig = await this.loadUserConfig();
+      const isModelIdExists = (modelId: string) => {
+        return currentUserConfig.models.some((existingModel) => existingModel.id === modelId);
+      };
+
+      if (isModelIdExists(model.id)) {
+        throw new Error("指定されたモデルIDを持つモデルはすでに存在しています。");
+      }
+
+      currentUserConfig.models = [...currentUserConfig.models, model];
+      await this.saveUserConfig(currentUserConfig);
+
+      return { success: true };
+    } catch (error) {
+      console.error("モデル追加エラー:", error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   }
