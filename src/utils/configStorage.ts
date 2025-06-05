@@ -13,14 +13,14 @@ export class ConfigStorage {
 
   static async loadUserConfig(): Promise<UserConfig> {
     try {
-      const userData = (await LocalStorage.getItem(USER_CONFIG_KEY)) as string;
+      const userData = await LocalStorage.getItem<string>(USER_CONFIG_KEY)
       if (!userData) {
         return this.getDefaultUserConfig();
       }
       const userConfig = JSON.parse(userData) as UserConfig;
       return userConfig;
     } catch (error) {
-      console.log("ユーザ設定読み込みエラー", error);
+      console.error("ユーザ設定読み込みエラー", error);
     }
     return this.getDefaultUserConfig();
   }
