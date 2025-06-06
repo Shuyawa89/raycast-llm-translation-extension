@@ -62,4 +62,40 @@ export class ConfigStorage {
       };
     }
   }
+
+  static async removeModel(modelId: string): Promise<OperationResult> {
+    try {
+      const currentUserConfig = await this.loadUserConfig();
+      const isModelIdExists = (modelId: string) => {
+        return currentUserConfig.models.some((existingModel) => existingModel.id === modelId);
+      };
+      if (!isModelIdExists(modelId)) { // 指定したidが存在しない場合
+        throw new Error("指定されたモデルIDを持つモデルは存在しません");
+      }
+
+      const newModels = currentUserConfig.models.filter((model: LlmModel) => {
+        return model.id !== modelId;
+      });
+
+      if (newModels.length === 0) {
+        throw new Error("全てのモデルを削除することはできません");
+      }
+
+      if (modelId === currentUserConfig.defaultModelId) { // デフォルトモデルが削除対象の場合の処理
+        currentUserConfig.defaultModelId = newModels[0].id;
+      }
+      currentUserConfig.models = newModels;
+      await this.saveUserConfig(currentUserConfig);
+
+      return {
+        success: true
+      };
+    } catch (error) {
+      console.error("モデル削除エラー:", error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error)
+      };
+    }
+  }
 }
