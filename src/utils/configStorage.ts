@@ -11,6 +11,10 @@ export class ConfigStorage {
     };
   }
 
+  private static modelExists(models: LlmModel[], modelId: string): boolean {
+    return models.some(model => model.id === modelId);
+  }
+
   static async loadUserConfig(): Promise<UserConfig> {
     try {
       const userData = await LocalStorage.getItem<string>(USER_CONFIG_KEY);
@@ -42,11 +46,8 @@ export class ConfigStorage {
   static async addModel(model: LlmModel): Promise<OperationResult> {
     try {
       const currentUserConfig = await this.loadUserConfig();
-      const isModelIdExists = (modelId: string) => {
-        return currentUserConfig.models.some((existingModel) => existingModel.id === modelId);
-      };
 
-      if (isModelIdExists(model.id)) {
+      if (this.modelExists(currentUserConfig.models, model.id)) {
         throw new Error("指定されたモデルIDを持つモデルはすでに存在しています。");
       }
 
@@ -66,15 +67,12 @@ export class ConfigStorage {
   static async removeModel(modelId: string): Promise<OperationResult> {
     try {
       const currentUserConfig = await this.loadUserConfig();
-      const isModelIdExists = (modelId: string) => {
-        return currentUserConfig.models.some((existingModel) => existingModel.id === modelId);
-      };
-      if (!isModelIdExists(modelId)) { // 指定したidが存在しない場合
+      if (!this.modelExists(currentUserConfig.models, modelId)) { // 指定したidが存在しない場合
         throw new Error("指定されたモデルIDを持つモデルは存在しません");
       }
 
-      const newModels = currentUserConfig.models.filter((model: LlmModel) => {
-        return model.id !== modelId;
+      const newModels = currentUserConfig.models.filter((existingModel: LlmModel) => {
+        return existingModel.id !== modelId;
       });
 
       if (newModels.length === 0) {
@@ -82,7 +80,8 @@ export class ConfigStorage {
       }
 
       if (modelId === currentUserConfig.defaultModelId) { // デフォルトモデルが削除対象の場合の処理
-        currentUserConfig.defaultModelId = newModels[0].id;
+        const newDefault = newModels.find(model => !model.requiresApiKey) || newModels[0];
+        currentUserConfig.defaultModelId = newDefault.id;
       }
       currentUserConfig.models = newModels;
       await this.saveUserConfig(currentUserConfig);
