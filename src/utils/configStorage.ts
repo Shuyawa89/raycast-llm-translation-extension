@@ -12,7 +12,7 @@ export class ConfigStorage {
   }
 
   private static modelExists(models: LlmModel[], modelId: string): boolean {
-    return models.some(model => model.id === modelId);
+    return models.some((model) => model.id === modelId);
   }
 
   static async loadUserConfig(): Promise<UserConfig> {
@@ -67,7 +67,8 @@ export class ConfigStorage {
   static async removeModel(modelId: string): Promise<OperationResult> {
     try {
       const currentUserConfig = await this.loadUserConfig();
-      if (!this.modelExists(currentUserConfig.models, modelId)) { // 指定したidが存在しない場合
+      if (!this.modelExists(currentUserConfig.models, modelId)) {
+        // 指定したidが存在しない場合
         throw new Error("指定されたモデルIDを持つモデルは存在しません");
       }
 
@@ -79,21 +80,49 @@ export class ConfigStorage {
         throw new Error("全てのモデルを削除することはできません");
       }
 
-      if (modelId === currentUserConfig.defaultModelId) { // デフォルトモデルが削除対象の場合の処理
-        const newDefault = newModels.find(model => !model.requiresApiKey) || newModels[0];
+      if (modelId === currentUserConfig.defaultModelId) {
+        // デフォルトモデルが削除対象の場合の処理
+        const newDefault = newModels.find((model) => !model.requiresApiKey) || newModels[0];
         currentUserConfig.defaultModelId = newDefault.id;
       }
       currentUserConfig.models = newModels;
       await this.saveUserConfig(currentUserConfig);
 
       return {
-        success: true
+        success: true,
       };
     } catch (error) {
       console.error("モデル削除エラー:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
+
+  static async updateModelApiKey(modelId: string, apiKey: string): Promise<OperationResult> {
+    try {
+      const currentUserConfig = await this.loadUserConfig();
+
+      if (!this.modelExists(currentUserConfig.models, modelId)) {
+        throw new Error("指定されたモデルIDを持つモデルは存在しません");
+      }
+
+      currentUserConfig.models = currentUserConfig.models.map((model) => {
+        if (model.id === modelId) {
+          return { ...model, apiKey: apiKey };
+        }
+        return model;
+      });
+
+      await this.saveUserConfig(currentUserConfig);
+
+      return { success: true };
+    } catch (error) {
+      console.error("ApiKey更新エラー:", error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   }
