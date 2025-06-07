@@ -126,4 +126,17 @@ export class ConfigStorage {
       };
     }
   }
+
+  static async resetToDefault(): Promise<OperationResult> {
+    try {
+      await this.saveUserConfig({models: DEFAULT_MODELS, defaultModelId: DEFAULT_MODEL_ID});
+      return {success: true};
+    } catch (error) {
+      console.error("設定リセット中に問題が発生しました", error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error)
+      };
+    }
+  }
 }
