@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { LlmModel } from "../types/llmModel";
 import { ConfigStorage } from "../utils/configStorage";
 
@@ -19,8 +19,6 @@ export function useModelConfig() {
 
         setModels(userConfig.models);
         setDefaultModelId(userConfig.defaultModelId);
-
-        console.log("設定読み込み完了");
       } catch (error) {
         console.error("設定読み込みエラー", error);
         setError("設定の読み込みに失敗しました");
@@ -31,8 +29,8 @@ export function useModelConfig() {
     loadInitialConfig();
   }, []); // コンポーネントが初めて表示された時のみ実行
 
-  const addModel = async (model: LlmModel) => {
-    try{
+  const addModel = useCallback(async (model: LlmModel) => {
+    try {
       setIsLoading(true);
       setError(null);
 
@@ -50,7 +48,7 @@ export function useModelConfig() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, []);
 
   return {
     models,
