@@ -31,10 +31,32 @@ export function useModelConfig() {
     loadInitialConfig();
   }, []); // コンポーネントが初めて表示された時のみ実行
 
+  const addModel = async (model: LlmModel) => {
+    try{
+      setIsLoading(true);
+      setError(null);
+
+      const result = await ConfigStorage.addModel(model);
+
+      if (result.success) {
+        const userConfig = await ConfigStorage.loadUserConfig();
+        setModels(userConfig.models);
+        setDefaultModelId(userConfig.defaultModelId);
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      setError(error instanceof Error ? error.message : String(error));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return {
     models,
     defaultModelId,
     isLoading,
     error,
+    addModel,
   };
 }
