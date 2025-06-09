@@ -50,11 +50,32 @@ export function useModelConfig() {
     }
   }, []);
 
+  const removeModel = useCallback(async (modelId: string) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const result = await ConfigStorage.removeModel(modelId);
+      if (result.success) {
+        const userConfig = await ConfigStorage.loadUserConfig();
+        setModels(userConfig.models);
+        setDefaultModelId(userConfig.defaultModelId);
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      setError(error instanceof Error ? error.message : String(error));
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     models,
     defaultModelId,
     isLoading,
     error,
     addModel,
+    removeModel,
   };
 }
