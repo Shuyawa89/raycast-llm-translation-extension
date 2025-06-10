@@ -70,6 +70,26 @@ export function useModelConfig() {
     }
   }, []);
 
+  const updateApiKey = useCallback(async (modelId: string, apiKey: string) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const result = await ConfigStorage.updateModelApiKey(modelId, apiKey);
+      if (result.success) {
+        const userConfig = await ConfigStorage.loadUserConfig();
+        setModels(userConfig.models);
+        setDefaultModelId(userConfig.defaultModelId);
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      setError(error instanceof Error ? error.message : String(error));
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     models,
     defaultModelId,
@@ -77,5 +97,6 @@ export function useModelConfig() {
     error,
     addModel,
     removeModel,
+    updateApiKey,
   };
 }
