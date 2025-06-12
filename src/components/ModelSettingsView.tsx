@@ -1,4 +1,4 @@
-import { Action, ActionPanel, List } from "@raycast/api";
+import { Action, ActionPanel, Alert, confirmAlert, List } from "@raycast/api";
 import { useModelConfig } from "../hooks/useModelConfig";
 import { LlmModel } from "../types/llmModel";
 
@@ -15,6 +15,21 @@ export function ModelSettingsView({ onBack }: ModelSettingsViewProps) {
     if (model.id === defaultModelId) message = "* ";
     message += model.requiresApiKey ? (model.apiKey ? "APIキー設定済み" : "APIキー未設定") : "APIキー不要";
     return message;
+  };
+
+  const handleDeleteModel = async (model: LlmModel) => {
+    const confirmed = await confirmAlert({
+      title: "モデルを削除しますか？",
+      message: `「${model.name}」を削除します。この操作は取り消せません。`,
+      primaryAction: {
+        title: "削除",
+        style: Alert.ActionStyle.Destructive,
+      },
+    });
+
+    if (confirmed) {
+      await removeModel(model.id);
+    }
   };
 
   return (
@@ -53,7 +68,7 @@ export function ModelSettingsView({ onBack }: ModelSettingsViewProps) {
                   title="モデル削除"
                   style={Action.Style.Destructive}
                   onAction={() => {
-                    console.log("LLMモデル削除処理をする");
+                    handleDeleteModel(model)
                   }}
                 />
               </ActionPanel.Section>
