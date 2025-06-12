@@ -1,0 +1,70 @@
+import { Action, ActionPanel, List } from "@raycast/api";
+import { useModelConfig } from "../hooks/useModelConfig";
+import { LlmModel } from "../types/llmModel";
+
+interface ModelSettingsViewProps {
+  onBack: () => void;
+}
+
+export function ModelSettingsView({ onBack }: ModelSettingsViewProps) {
+  const { models, defaultModelId, isLoading, error, addModel, removeModel, updateApiKey, resetToDefault } =
+    useModelConfig();
+
+  const subTitle = (model: LlmModel) => {
+    let message = "";
+    if (model.id === defaultModelId) message = "* ";
+    message += model.requiresApiKey ? (model.apiKey ? "APIキー設定済み" : "APIキー未設定") : "APIキー不要";
+    return message;
+  };
+
+  return (
+    <List isLoading={isLoading}>
+      {models.map((model) => (
+        <List.Item
+          key={model.id}
+          title={model.id}
+          subtitle={subTitle(model)}
+          actions={
+            <ActionPanel>
+              <ActionPanel.Section title="ナビゲーション">
+                <Action title="戻る" onAction={onBack} />
+              </ActionPanel.Section>
+
+              <ActionPanel.Section title={"モデル操作"}>
+                <Action
+                  title="新規モデル追加"
+                  onAction={() => {
+                    console.log("APIキー設定処理を実行する");
+                  }}
+                />
+                <Action
+                  title="デフォルトモデルの設定"
+                  onAction={() => {
+                    console.log("APIキー設定処理を実行する");
+                  }}
+                />
+                <Action
+                  title="APIキー設定"
+                  onAction={() => {
+                    console.log("APIキー設定処理を実行する");
+                  }}
+                />
+                <Action
+                  title="モデル削除"
+                  style={Action.Style.Destructive}
+                  onAction={() => {
+                    console.log("LLMモデル削除処理をする");
+                  }}
+                />
+              </ActionPanel.Section>
+
+              <ActionPanel.Section title="設定">
+                <Action title="設定をリセット" style={Action.Style.Destructive} onAction={resetToDefault} />
+              </ActionPanel.Section>
+            </ActionPanel>
+          }
+        />
+      ))}
+    </List>
+  );
+}
