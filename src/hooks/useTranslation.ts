@@ -22,6 +22,7 @@ export function useTranslation() {
   const [translationResult, setTranslationResult] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isInputForm, setIsInputForm] = useState<boolean>(false);
+  const [isModelSettings, setIsModelSettings] = useState<boolean>(false);
 
   /**
    * 翻訳処理を実行する
@@ -106,13 +107,24 @@ export function useTranslation() {
     setIsInputForm(false);
   };
 
+  const showModelSettings = (): void => {
+    setIsModelSettings(true);
+  };
+
+  const hideModelSettings = (): void => {
+    setIsModelSettings(false);
+  };
+
   return {
     translationResult,
     isLoading,
     isInputForm,
+    isModelSettings,
     handleTranslate,
     resetTranslation,
     showManualInput,
     hideManualInput,
+    showModelSettings,
+    hideModelSettings,
   };
 }
