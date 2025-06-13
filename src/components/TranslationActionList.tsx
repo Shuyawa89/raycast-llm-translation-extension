@@ -7,9 +7,10 @@ interface TranslationActionListProps {
   isLoading: boolean;
   onTranslate: (direction: TranslationDirection, text: string) => Promise<void>;
   onShowManualInput: () => void;
+  onShowModelSettings: () => void;
 }
 
-export function TranslationActionList({isLoading, onTranslate, onShowManualInput}: TranslationActionListProps) {
+export function TranslationActionList({isLoading, onTranslate, onShowManualInput, onShowModelSettings}: TranslationActionListProps) {
   return (
       <List isLoading={isLoading}>
         {TRANSLATION_ACTIONS.map((action) => (
@@ -29,6 +30,8 @@ export function TranslationActionList({isLoading, onTranslate, onShowManualInput
                       onTranslate("自動判定", text || "");
                     } else if (action.type === "manual-input") {
                       onShowManualInput(); // 入力フォームを表示
+                    } else if (action.type === "model-settings") {
+                      onShowModelSettings();
                     }
                   }}
                 />
