@@ -3,6 +3,7 @@ import { LocalStorage } from "@raycast/api";
 import { DEFAULT_MODEL_ID, DEFAULT_MODELS } from "./llmModelDefinitions";
 
 const USER_CONFIG_KEY = "userConfigKey";
+
 export class ConfigStorage {
   private static getDefaultUserConfig(): UserConfig {
     return {
@@ -129,13 +130,31 @@ export class ConfigStorage {
 
   static async resetToDefault(): Promise<OperationResult> {
     try {
-      await this.saveUserConfig({models: DEFAULT_MODELS, defaultModelId: DEFAULT_MODEL_ID});
-      return {success: true};
+      await this.saveUserConfig({ models: DEFAULT_MODELS, defaultModelId: DEFAULT_MODEL_ID });
+      return { success: true };
     } catch (error) {
       console.error("設定リセット中に問題が発生しました", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
+
+  static async setDefaultModel(modelId: string): Promise<OperationResult> {
+    try {
+      const userConfig = await this.loadUserConfig();
+      if (!this.modelExists(userConfig.models, modelId)) {
+        throw new Error("指定されたモデルIDを持つモデルは存在しません");
+      }
+      userConfig.defaultModelId = modelId;
+      await this.saveUserConfig(userConfig);
+      return { success: true };
+    } catch (error) {
+      console.error("デフォルトモデル変更エラー: ", error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   }
