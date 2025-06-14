@@ -11,6 +11,15 @@ interface TranslationActionListProps {
 }
 
 export function TranslationActionList({isLoading, onTranslate, onShowManualInput, onShowModelSettings}: TranslationActionListProps) {
+  const getActionTitle = (type: string): string => {
+    switch (type) {
+      case "selected-text": return "翻訳実行";
+      case "manual-input": return "入力フォームを開く";
+      case "model-settings": return "モデル設定を開く";
+      default: return "実行";
+    }
+  };
+
   return (
       <List isLoading={isLoading}>
         {TRANSLATION_ACTIONS.map((action) => (
@@ -22,7 +31,7 @@ export function TranslationActionList({isLoading, onTranslate, onShowManualInput
             actions={
               <ActionPanel>
                 <Action
-                  title="翻訳実行"
+                  title={getActionTitle(action.type)}
                   onAction={async () => {
                     if (action.type === "selected-text") {
                       const selectedText = getSelectedTextSafely();
