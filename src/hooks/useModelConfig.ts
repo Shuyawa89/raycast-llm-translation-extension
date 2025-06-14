@@ -7,6 +7,12 @@ export function useModelConfig() {
   const [defaultModelId, setDefaultModelId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  
+  const loadAndSetUserConfig = async (): Promise<void> => {
+    const userConfig = await ConfigStorage.loadUserConfig();
+    setModels(userConfig.models);
+    setDefaultModelId(userConfig.defaultModelId);
+  }
 
   // 初回データ読み込み
   useEffect(() => {
@@ -37,9 +43,7 @@ export function useModelConfig() {
       const result = await ConfigStorage.addModel(model);
 
       if (result.success) {
-        const userConfig = await ConfigStorage.loadUserConfig();
-        setModels(userConfig.models);
-        setDefaultModelId(userConfig.defaultModelId);
+        await loadAndSetUserConfig();
       } else {
         throw new Error(result.error);
       }
@@ -57,9 +61,7 @@ export function useModelConfig() {
 
       const result = await ConfigStorage.removeModel(modelId);
       if (result.success) {
-        const userConfig = await ConfigStorage.loadUserConfig();
-        setModels(userConfig.models);
-        setDefaultModelId(userConfig.defaultModelId);
+        await loadAndSetUserConfig();
       } else {
         throw new Error(result.error);
       }
@@ -77,9 +79,7 @@ export function useModelConfig() {
 
       const result = await ConfigStorage.updateModelApiKey(modelId, apiKey);
       if (result.success) {
-        const userConfig = await ConfigStorage.loadUserConfig();
-        setModels(userConfig.models);
-        setDefaultModelId(userConfig.defaultModelId);
+        await loadAndSetUserConfig();
       } else {
         throw new Error(result.error);
       }
@@ -97,9 +97,7 @@ export function useModelConfig() {
 
       const result = await ConfigStorage.resetToDefault();
       if (result.success) {
-        const userConfig = await ConfigStorage.loadUserConfig();
-        setModels(userConfig.models);
-        setDefaultModelId(userConfig.defaultModelId);
+        await loadAndSetUserConfig();
       } else {
         throw new Error(result.error);
       }
@@ -117,9 +115,7 @@ export function useModelConfig() {
 
       const result = await ConfigStorage.setDefaultModel(modelId);
       if(result.success){
-        const userConfig = await ConfigStorage.loadUserConfig();
-        setModels(userConfig.models);
-        setDefaultModelId(userConfig.defaultModelId);
+        await loadAndSetUserConfig();
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : String(error));
