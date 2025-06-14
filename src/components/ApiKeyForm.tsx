@@ -4,18 +4,18 @@ import { Action, ActionPanel, Form } from "@raycast/api";
 
 interface ApiKeyFormProps {
   model: LlmModel;
-  registerApiKey: (apiKey: string) => void;
-  cancel: () => void;
+  onSave: (apiKey: string) => void;
+  onCancel: () => void;
 }
 
-export function ApiKeyForm({model, registerApiKey, cancel}: ApiKeyFormProps) {
+export function ApiKeyForm({model, onSave, onCancel}: ApiKeyFormProps) {
   const [apiKey, setApiKey] = useState<string>(model.apiKey || "");
   return (
     <Form
       actions={
         <ActionPanel>
-          <Action title="保存" onAction={() => registerApiKey(apiKey)} />
-          <Action title="キャンセル" onAction={cancel} />
+          <Action title="保存" onAction={() => onSave(apiKey)} />
+          <Action title="キャンセル" onAction={onCancel} />
         </ActionPanel>
       }
     >
