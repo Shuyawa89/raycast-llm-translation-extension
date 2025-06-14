@@ -13,6 +13,7 @@ export function ModelSettingsView({ onBack }: ModelSettingsViewProps) {
     useModelConfig();
 
   const [editingModel, setEditingModel] = useState<LlmModel | null>(null);
+  const [selectedModel, setSelectedModel] = useState<LlmModel | null>(null);
 
   const subTitle = (model: LlmModel): string => {
     let message = "";
@@ -51,8 +52,95 @@ export function ModelSettingsView({ onBack }: ModelSettingsViewProps) {
     return <ApiKeyForm model={editingModel} onSave={handleSaveApiKey} onCancel={handleCancel} />;
   }
 
+  if (selectedModel) {
+    return (
+      <List>
+        <List.Item
+          title="APIキー設定"
+          subtitle={selectedModel.apiKey ? "設定済み" : "未設定"}
+          actions={
+            <ActionPanel>
+              <Action
+                title="設定する"
+                onAction={() => {
+                  setEditingModel(selectedModel);
+                  setSelectedModel(null);
+                }}
+              />
+            </ActionPanel>
+          }
+        />
+        <List.Item
+          title="デフォルトモデルに設定"
+          subtitle={selectedModel.id === defaultModelId ? "現在のデフォルト" : "デフォルトに設定"}
+          actions={
+            <ActionPanel>
+              <Action
+                title="デフォルトに設定"
+                onAction={() => {
+                  console.log("デフォルト設定:", selectedModel.name);
+                  // TODO: デフォルトモデル変更機能の実装
+                }}
+              />
+            </ActionPanel>
+          }
+        />
+        <List.Item
+          title="モデル削除"
+          subtitle="このモデルを削除します"
+          actions={
+            <ActionPanel>
+              <Action
+                title="削除"
+                style={Action.Style.Destructive}
+                onAction={() => {
+                  handleDeleteModel(selectedModel);
+                  setSelectedModel(null);
+                }}
+              />
+            </ActionPanel>
+          }
+        />
+        <List.Item
+          title="戻る"
+          actions={
+            <ActionPanel>
+              <Action title="リストに戻る" onAction={() => setSelectedModel(null)} />
+            </ActionPanel>
+          }
+        />
+      </List>
+    );
+  }
   return (
     <List isLoading={isLoading}>
+      <List.Item
+        title="➕ 新規モデル追加"
+        subtitle="新しいLLMモデルを追加"
+        actions={
+          <ActionPanel>
+            <Action title="追加" onAction={() => console.log("新規モデル追加")} />
+          </ActionPanel>
+        }
+      />
+      <List.Item
+        title="🔄 設定をリセット"
+        subtitle="すべての設定を初期化"
+        actions={
+          <ActionPanel>
+            <Action title="リセット" style={Action.Style.Destructive} onAction={resetToDefault} />
+          </ActionPanel>
+        }
+      />
+      <List.Item
+        title="⬅️ 戻る"
+        subtitle="翻訳画面に戻る"
+        actions={
+          <ActionPanel>
+            <Action title="戻る" onAction={onBack} />
+          </ActionPanel>
+        }
+      />
       {models.map((model) => (
         <List.Item
           key={model.id}
@@ -60,41 +148,13 @@ export function ModelSettingsView({ onBack }: ModelSettingsViewProps) {
           subtitle={subTitle(model)}
           actions={
             <ActionPanel>
-              <ActionPanel.Section title="ナビゲーション">
-                <Action title="戻る" onAction={onBack} />
-              </ActionPanel.Section>
-
-              <ActionPanel.Section title={"モデル操作"}>
-                <Action
-                  title="新規モデル追加"
-                  onAction={() => {
-                    console.log("APIキー設定処理を実行する");
-                  }}
-                />
-                <Action
-                  title="デフォルトモデルの設定"
-                  onAction={() => {
-                    console.log("APIキー設定処理を実行する");
-                  }}
-                />
-                <Action
-                  title="APIキー設定"
-                  onAction={() => {
-                    setEditingModel(model);
-                  }}
-                />
-                <Action
-                  title="モデル削除"
-                  style={Action.Style.Destructive}
-                  onAction={() => {
-                    handleDeleteModel(model);
-                  }}
-                />
-              </ActionPanel.Section>
-
-              <ActionPanel.Section title="設定">
-                <Action title="設定をリセット" style={Action.Style.Destructive} onAction={resetToDefault} />
-              </ActionPanel.Section>
+              <Action
+                title="詳細・操作"
+                onAction={() => {
+                  console.log("詳細画面へ", model.name);
+                  setSelectedModel(model);
+                }}
+              />
             </ActionPanel>
           }
         />
