@@ -1,6 +1,8 @@
 import { Action, ActionPanel, Alert, confirmAlert, List } from "@raycast/api";
 import { useModelConfig } from "../hooks/useModelConfig";
 import { LlmModel } from "../types/llmModel";
+import { useState } from "react";
+import { ApiKeyForm } from "./ApiKeyForm";
 
 interface ModelSettingsViewProps {
   onBack: () => void;
@@ -10,14 +12,16 @@ export function ModelSettingsView({ onBack }: ModelSettingsViewProps) {
   const { models, defaultModelId, isLoading, error, addModel, removeModel, updateApiKey, resetToDefault } =
     useModelConfig();
 
-  const subTitle = (model: LlmModel) => {
+  const [editingModel, setEditingModel] = useState<LlmModel | null>(null);
+
+  const subTitle = (model: LlmModel): string => {
     let message = "";
     if (model.id === defaultModelId) message = "* ";
     message += model.requiresApiKey ? (model.apiKey ? "APIキー設定済み" : "APIキー未設定") : "APIキー不要";
     return message;
   };
 
-  const handleDeleteModel = async (model: LlmModel) => {
+  const handleDeleteModel = async (model: LlmModel): Promise<void> => {
     const confirmed = await confirmAlert({
       title: "モデルを削除しますか？",
       message: `「${model.name}」を削除します。この操作は取り消せません。`,
@@ -31,6 +35,21 @@ export function ModelSettingsView({ onBack }: ModelSettingsViewProps) {
       await removeModel(model.id);
     }
   };
+
+  const handleSaveApiKey = async (apiKey: string): Promise<void> => {
+    if (editingModel) {
+      await updateApiKey(editingModel.id, apiKey);
+      setEditingModel(null);
+    }
+  };
+
+  const handleCancel = () => {
+    setEditingModel(null);
+  };
+
+  if (editingModel) {
+    return <ApiKeyForm model={editingModel} onSave={handleSaveApiKey} onCancel={handleCancel} />;
+  }
 
   return (
     <List isLoading={isLoading}>
@@ -61,14 +80,14 @@ export function ModelSettingsView({ onBack }: ModelSettingsViewProps) {
                 <Action
                   title="APIキー設定"
                   onAction={() => {
-                    console.log("APIキー設定処理を実行する");
+                    setEditingModel(model);
                   }}
                 />
                 <Action
                   title="モデル削除"
                   style={Action.Style.Destructive}
                   onAction={() => {
-                    handleDeleteModel(model)
+                    handleDeleteModel(model);
                   }}
                 />
               </ActionPanel.Section>
