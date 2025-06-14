@@ -25,7 +25,7 @@ export default function Command() {
 
   // モデル設定の場合の画面
   if (isModelSettings) {
-    return <ModelSettingsView onBack={hideModelSettings} />
+    return <ModelSettingsView onBack={hideModelSettings} />;
   }
 
   if (isInputForm) {
@@ -40,6 +40,11 @@ export default function Command() {
     );
   }
   return (
-    <TranslationActionList isLoading={isLoading} onTranslate={handleTranslate} onShowManualInput={showManualInput} onShowModelSettings={showModelSettings}/>
+    <TranslationActionList
+      isLoading={isLoading}
+      onTranslate={handleTranslate}
+      onShowManualInput={showManualInput}
+      onShowModelSettings={showModelSettings}
+    />
   );
 }
