@@ -9,8 +9,17 @@ interface ModelSettingsViewProps {
 }
 
 export function ModelSettingsView({ onBack }: ModelSettingsViewProps) {
-  const { models, defaultModelId, isLoading, error, addModel, removeModel, updateApiKey, resetToDefault } =
-    useModelConfig();
+  const {
+    models,
+    defaultModelId,
+    isLoading,
+    error,
+    addModel,
+    removeModel,
+    updateApiKey,
+    resetToDefault,
+    setDefaultModel,
+  } = useModelConfig();
 
   const [editingModel, setEditingModel] = useState<LlmModel | null>(null);
   const [selectedModel, setSelectedModel] = useState<LlmModel | null>(null);
@@ -78,8 +87,7 @@ export function ModelSettingsView({ onBack }: ModelSettingsViewProps) {
               <Action
                 title="デフォルトに設定"
                 onAction={() => {
-                  console.log("デフォルト設定:", selectedModel.name);
-                  // TODO: デフォルトモデル変更機能の実装
+                  setDefaultModel(selectedModel.id);
                 }}
               />
             </ActionPanel>
