@@ -8,7 +8,7 @@ interface ApiKeyFormProps {
   onCancel: () => void;
 }
 
-export function ApiKeyForm({model, onSave, onCancel}: ApiKeyFormProps) {
+export function ApiKeyForm({ model, onSave, onCancel }: ApiKeyFormProps) {
   const [apiKey, setApiKey] = useState<string>(model.apiKey || "");
   return (
     <Form

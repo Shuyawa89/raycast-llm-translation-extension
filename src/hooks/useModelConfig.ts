@@ -7,12 +7,12 @@ export function useModelConfig() {
   const [defaultModelId, setDefaultModelId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const loadAndSetUserConfig = async (): Promise<void> => {
     const userConfig = await ConfigStorage.loadUserConfig();
     setModels(userConfig.models);
     setDefaultModelId(userConfig.defaultModelId);
-  }
+  };
 
   // 初回データ読み込み
   useEffect(() => {
@@ -109,12 +109,12 @@ export function useModelConfig() {
   }, []);
 
   const setDefaultModel = useCallback(async (modelId: string) => {
-    try{
+    try {
       setIsLoading(true);
       setError(null);
 
       const result = await ConfigStorage.setDefaultModel(modelId);
-      if(result.success){
+      if (result.success) {
         await loadAndSetUserConfig();
       }
     } catch (error) {

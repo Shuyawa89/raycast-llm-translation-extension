@@ -7,7 +7,7 @@ interface AddModelFormProps {
   onCancel: () => void;
 }
 
-export function AddModelForm({onSave, onCancel}: AddModelFormProps) {
+export function AddModelForm({ onSave, onCancel }: AddModelFormProps) {
   const [id, setId] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [baseUrl, setBaseUrl] = useState<string>("");
@@ -18,19 +18,19 @@ export function AddModelForm({onSave, onCancel}: AddModelFormProps) {
 
   const isValid = (value: string): boolean => {
     return value.trim().length > 0;
-  }
+  };
 
   const isFormValid = (): boolean => {
     const requireParams = [id, name, baseUrl, modelName];
     return requireParams.every(isValid);
-  }
+  };
 
   const getFieldError = (value: string, fieldName: string): string | undefined => {
-    if(!isValid(value)) {
-      return `${fieldName}は必須項目です`
+    if (!isValid(value)) {
+      return `${fieldName}は必須項目です`;
     }
     return undefined;
-  }
+  };
 
   const handleSave = (): void => {
     if (isFormValid()) {
@@ -51,22 +51,19 @@ export function AddModelForm({onSave, onCancel}: AddModelFormProps) {
     <Form
       actions={
         <ActionPanel>
-          <Action
-            title="保存"
-            onAction={handleSave}
-          />
+          <Action title="保存" onAction={handleSave} />
           <Action title="キャンセル" onAction={onCancel} />
         </ActionPanel>
       }
     >
       <Form.TextField
-      id="id"
-      title="モデルID *"
-      placeholder="例: my-gpt4"
-      value={id}
-      onChange={setId}
-      error={getFieldError(id, "モデルID")}
-    />
+        id="id"
+        title="モデルID *"
+        placeholder="例: my-gpt4"
+        value={id}
+        onChange={setId}
+        error={getFieldError(id, "モデルID")}
+      />
 
       <Form.TextField
         id="name"
@@ -95,12 +92,7 @@ export function AddModelForm({onSave, onCancel}: AddModelFormProps) {
         error={getFieldError(modelName, "モデル識別名")}
       />
 
-      <Form.Checkbox
-        id="requiresApiKey"
-        label="APIキーが必要"
-        value={requiresApiKey}
-        onChange={setRequiresApiKey}
-      />
+      <Form.Checkbox id="requiresApiKey" label="APIキーが必要" value={requiresApiKey} onChange={setRequiresApiKey} />
 
       {requiresApiKey && (
         <Form.TextField
@@ -120,7 +112,6 @@ export function AddModelForm({onSave, onCancel}: AddModelFormProps) {
         value={description}
         onChange={setDescription}
       />
-
     </Form>
-  )
+  );
 }

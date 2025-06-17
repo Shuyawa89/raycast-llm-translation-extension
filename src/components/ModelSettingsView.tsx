@@ -62,18 +62,18 @@ export function ModelSettingsView({ onBack }: ModelSettingsViewProps) {
   const handleAddModel = async (model: LlmModel) => {
     await addModel(model);
     setIsAddingModel(false);
-  }
+  };
 
   const handleCancelAdd = () => {
     setIsAddingModel(false);
-  }
+  };
 
   if (editingModel) {
     return <ApiKeyForm model={editingModel} onSave={handleSaveApiKey} onCancel={handleCancel} />;
   }
 
   if (isAddingModel) {
-    return <AddModelForm onSave={handleAddModel} onCancel={handleCancelAdd} />
+    return <AddModelForm onSave={handleAddModel} onCancel={handleCancelAdd} />;
   }
 
   if (selectedModel) {
@@ -143,7 +143,7 @@ export function ModelSettingsView({ onBack }: ModelSettingsViewProps) {
         subtitle="新しいLLMモデルを追加"
         actions={
           <ActionPanel>
-            <Action title="追加" onAction={() => setIsAddingModel(true)}/>
+            <Action title="追加" onAction={() => setIsAddingModel(true)} />
           </ActionPanel>
         }
       />
