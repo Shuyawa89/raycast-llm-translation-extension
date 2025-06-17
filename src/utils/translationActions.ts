@@ -14,5 +14,12 @@ export const TRANSLATION_ACTIONS: TranslationAction[] = [
     subtitle: '手動で入力した内容を翻訳します',
     icon: '✏️',
     type: 'manual-input' as const
-  }
+  },
+  {
+    id: 'model-settings',
+    title: 'モデル設定',
+    subtitle: 'LLMモデルの追加・削除・APIキー設定',
+    icon: '⚙️',
+    type: 'model-settings' as const
+  },
 ];
