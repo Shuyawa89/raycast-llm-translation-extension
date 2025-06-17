@@ -3,6 +3,7 @@ import { useModelConfig } from "../hooks/useModelConfig";
 import { LlmModel } from "../types/llmModel";
 import { useState } from "react";
 import { ApiKeyForm } from "./ApiKeyForm";
+import { AddModelForm } from "./AddModelForm";
 
 interface ModelSettingsViewProps {
   onBack: () => void;
@@ -23,6 +24,7 @@ export function ModelSettingsView({ onBack }: ModelSettingsViewProps) {
 
   const [editingModel, setEditingModel] = useState<LlmModel | null>(null);
   const [selectedModel, setSelectedModel] = useState<LlmModel | null>(null);
+  const [isAddingModel, setIsAddingModel] = useState<boolean>(false);
 
   const subTitle = (model: LlmModel): string => {
     let message = "";
@@ -57,8 +59,21 @@ export function ModelSettingsView({ onBack }: ModelSettingsViewProps) {
     setEditingModel(null);
   };
 
+  const handleAddModel = async (model: LlmModel) => {
+    await addModel(model);
+    setIsAddingModel(false);
+  }
+
+  const handleCancelAdd = () => {
+    setIsAddingModel(false);
+  }
+
   if (editingModel) {
     return <ApiKeyForm model={editingModel} onSave={handleSaveApiKey} onCancel={handleCancel} />;
+  }
+
+  if (isAddingModel) {
+    return <AddModelForm onSave={handleAddModel} onCancel={handleCancelAdd} />
   }
 
   if (selectedModel) {
@@ -128,7 +143,7 @@ export function ModelSettingsView({ onBack }: ModelSettingsViewProps) {
         subtitle="新しいLLMモデルを追加"
         actions={
           <ActionPanel>
-            <Action title="追加" onAction={() => console.log("新規モデル追加")} />
+            <Action title="追加" onAction={() => setIsAddingModel(true)}/>
           </ActionPanel>
         }
       />
