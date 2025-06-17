@@ -88,6 +88,7 @@ export function ModelSettingsView({ onBack }: ModelSettingsViewProps) {
                 title="デフォルトに設定"
                 onAction={() => {
                   setDefaultModel(selectedModel.id);
+                  setSelectedModel(null);
                 }}
               />
             </ActionPanel>
