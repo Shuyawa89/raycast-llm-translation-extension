@@ -1,4 +1,5 @@
 import { ChatCompletionRequest, ChatCompletionResponse, ApiConfig, ChatMessage } from "../types/translation";
+import { ConfigStorage } from "../utils/configStorage";
 import { createTranslationSystemPrompt } from "../utils/textProcessing";
 
 const DEFAULT_CONFIG: ApiConfig = {
@@ -88,6 +89,18 @@ const apiClient = new TranslationApiClient();
  * @returns Promise<ChatCompletionResponse> 翻訳結果（OpenAI形式のレスポンス）
  */
 export async function translateText(text: string): Promise<ChatCompletionResponse> {
+  // UserConfigからモデル設定を取得して反映する
+  const userConfig = await ConfigStorage.loadUserConfig();
+  const model = userConfig.models.find(m => m.id === userConfig.defaultModelId);
+
+  if(model) {
+    setApiConfig({
+      baseUrl: model.baseUrl,
+      model: model.modelName,
+      apiKey: model.apiKey,
+    })
+  }
+
   // システムプロンプトと翻訳対象テキストを配列にまとめておく
   const messages: ChatMessage[] = [
     {

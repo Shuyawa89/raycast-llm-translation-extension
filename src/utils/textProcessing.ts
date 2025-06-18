@@ -11,7 +11,8 @@ import { TranslationDirection } from "../types/translation";
 export function removeThinkTags(text: string): string {
   return text
     .replace(/<think>[\s\S]*?<\/think>/g, "") // <think>...</think>を除去
-    .trim(); // 前後の空白を除去
+    .trim() // 前後の空白を除去
+    .replace(/\/nothink$/, "");   // 文末の"/nothink"タグを削除(thinkingモデル以外用)
 }
 
 /**
@@ -65,11 +66,11 @@ export function generateResultMarkdown(
   return `
 # 翻訳完了
 
-## 元のテキスト
-${originalText}
-
 ## 翻訳結果
 ${translatedText}
+
+## 元のテキスト
+${originalText}
 
 ## 情報
 - 翻訳方向: ${direction}
