@@ -65,11 +65,11 @@ export function generateResultMarkdown(
   return `
 # 翻訳完了
 
-## 元のテキスト
-${originalText}
-
 ## 翻訳結果
 ${translatedText}
+
+## 元のテキスト
+${originalText}
 
 ## 情報
 - 翻訳方向: ${direction}
