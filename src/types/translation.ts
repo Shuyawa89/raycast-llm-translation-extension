@@ -62,7 +62,7 @@ export interface TranslationRequest {
   };
 }
 
-export type TranslationDirection = "日英" | "英日" | "自動判定";
+export type TranslationDirection = "日→英" | "英→日";
 
 export interface TranslationResult {
   originalText: string;
