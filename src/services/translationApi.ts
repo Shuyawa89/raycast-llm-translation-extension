@@ -1,6 +1,6 @@
 import { ChatCompletionRequest, ChatCompletionResponse, ApiConfig, ChatMessage } from "../types/translation";
 import { ConfigStorage } from "../utils/configStorage";
-import { createTranslationSystemPrompt } from "../utils/textProcessing";
+import { containsJapanese, createEnToJaSystemPrompt, createJaToEnSystemPrompt } from "../utils/textProcessing";
 
 const DEFAULT_CONFIG: ApiConfig = {
   baseUrl: "http://localhost:11434/v1", // Ollama OpenAI互換エンドポイント
@@ -102,10 +102,11 @@ export async function translateText(text: string): Promise<ChatCompletionRespons
   }
 
   // システムプロンプトと翻訳対象テキストを配列にまとめておく
+  // 翻訳方向に応じて動的にシステムプロンプトを作成する
   const messages: ChatMessage[] = [
     {
       role: 'system',
-      content: createTranslationSystemPrompt()
+      content: containsJapanese(text) ? createJaToEnSystemPrompt() : createEnToJaSystemPrompt()
     },
     {
       role: 'user',
