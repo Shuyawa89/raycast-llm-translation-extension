@@ -6,8 +6,9 @@ import {
   formatTokenUsage,
   generateErrorMarkdown,
   generateResultMarkdown,
+  detectTranslationDirection,
+  createSystemPrompt,
 } from "../utils/textProcessing";
-import { TranslationDirection } from "../types/translation";
 
 /**
  * 翻訳処理用のカスタムフック
@@ -28,13 +29,13 @@ export function useTranslation() {
    * 翻訳処理を実行する
    * 指定したテキストをLLM APIで翻訳し、結果やエラーをMarkdown形式でstateに格納する
    *
-   * @param direction 翻訳方向（例: "日英", "英日" など）
    * @param text 翻訳対象のテキスト
    */
-  const handleTranslate = async (direction: TranslationDirection, text: string): Promise<void> => {
+  const handleTranslate = async (text: string): Promise<void> => {
     const startTime = Date.now();
 
     setIsLoading(true);
+    const direction = detectTranslationDirection(text);
 
     // 処置中の表示を更新
     showToast({
@@ -45,7 +46,8 @@ export function useTranslation() {
 
     // LLMに流して、データを取得する
     try {
-      const result = await translateText(text); //翻訳結果を取得
+      const systemPrompt = createSystemPrompt(direction); // 翻訳方向を取得
+      const result = await translateText(text, systemPrompt); //翻訳結果を取得
       const processingTime = Date.now() - startTime;
 
       const translatedText = result.choices[0]?.message?.content || "";

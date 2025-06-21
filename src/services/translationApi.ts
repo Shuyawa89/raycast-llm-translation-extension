@@ -1,6 +1,5 @@
 import { ChatCompletionRequest, ChatCompletionResponse, ApiConfig, ChatMessage } from "../types/translation";
 import { ConfigStorage } from "../utils/configStorage";
-import { createTranslationSystemPrompt } from "../utils/textProcessing";
 
 const DEFAULT_CONFIG: ApiConfig = {
   baseUrl: "http://localhost:11434/v1", // Ollama OpenAI互換エンドポイント
@@ -88,7 +87,7 @@ const apiClient = new TranslationApiClient();
  * @param text 翻訳対象のテキスト
  * @returns Promise<ChatCompletionResponse> 翻訳結果（OpenAI形式のレスポンス）
  */
-export async function translateText(text: string): Promise<ChatCompletionResponse> {
+export async function translateText(text: string, systemPrompt: string): Promise<ChatCompletionResponse> {
   // UserConfigからモデル設定を取得して反映する
   const userConfig = await ConfigStorage.loadUserConfig();
   const model = userConfig.models.find(m => m.id === userConfig.defaultModelId);
@@ -105,7 +104,7 @@ export async function translateText(text: string): Promise<ChatCompletionRespons
   const messages: ChatMessage[] = [
     {
       role: 'system',
-      content: createTranslationSystemPrompt()
+      content: systemPrompt
     },
     {
       role: 'user',

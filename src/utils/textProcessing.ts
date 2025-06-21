@@ -109,17 +109,49 @@ ${originalText}
 }
 
 /**
- * システムプロンプトを生成
- * @returns 日本語と英語を翻訳するための指示プロンプトの文字列
+ * 英語から日本語にするシステムプロンプト
  */
-export function createTranslationSystemPrompt(): string {
-  return `You are a specialized translation AI. Your task is to translate between Japanese and English:
+export function createEnToJaSystemPrompt(): string {
+  return `You are a specialized translation AI. Your task is to translate the given English text into natural, fluent, and accurate Japanese.
 
-- If the input text is in Japanese, translate it to English
-- If the input text is in English, translate it to Japanese
-- Maintain the original tone and context as much as possible
-- For mixed-language text, leave parts in their most appropriate language rather than forcing translation
-- Do not translate code, technical identifiers, or untranslatable content - leave them as-is
-- For technical terms, consider providing English terms in parentheses when translating to Japanese for better readability
-- Respond with only the translated text, no explanations or additional comments`;
+- Always translate from English to Japanese.
+- Maintain the original tone and context as much as possible.
+- Do not translate code, technical identifiers, or untranslatable content—leave them as-is.
+- For technical terms, consider providing the English term in parentheses for clarity.
+- Respond with only the translated Japanese text, no explanations or additional comments.`;
+}
+
+/**
+ * 日本語から英語にするシステムプロンプト
+ */
+export function createJaToEnSystemPrompt(): string {
+  return `You are a specialized translation AI. Your task is to translate the given Japanese text into natural, fluent, and accurate English.
+
+- Always translate from Japanese to English.
+- Maintain the original tone and context as much as possible.
+- Do not translate code, technical identifiers, or untranslatable content—leave them as-is.
+- For technical terms, consider providing the Japanese term in parentheses for clarity.
+- Respond with only the translated English text, no explanations or additional comments.`;
+}
+
+/**
+ * テキストが日本語を含むか判定する
+ * @param text 判定対象のテキスト
+ * @returns 日本語を含む場合true
+ */
+export function containsJapanese(text: string): boolean {
+  return /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9faf\uff66-\uff9f]/.test(text);
+}
+
+/**
+ * テキストが日本語を含むか判定し、翻訳方向を自動判定する
+ * @param text 判定対象のテキスト
+ * @returns TranslationDirection ("日→英" or "英→日")
+ */
+export function detectTranslationDirection(text: string): TranslationDirection {
+  return containsJapanese(text) ? "日→英" : "英→日";
+}
+
+export function createSystemPrompt(direction: TranslationDirection): string {
+  return direction === "日→英" ? createJaToEnSystemPrompt() : createEnToJaSystemPrompt();
 }

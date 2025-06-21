@@ -32,7 +32,7 @@ export default function Command() {
     return (
       <ManualInputForm
         onSubmit={(text: string) => {
-          handleTranslate("自動判定", text); //翻訳実行
+          handleTranslate(text); //翻訳実行
           hideManualInput();
         }}
         onCancel={hideManualInput}
