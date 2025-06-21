@@ -1,11 +1,10 @@
 import { Action, ActionPanel, List } from "@raycast/api";
 import { TRANSLATION_ACTIONS } from "../utils/translationActions";
 import { getSelectedTextSafely } from "../utils/selectedTextUtils";
-import { TranslationDirection } from "../types/translation";
 
 interface TranslationActionListProps {
   isLoading: boolean;
-  onTranslate: (direction: TranslationDirection, text: string) => Promise<void>;
+  onTranslate: (text: string) => Promise<void>;
   onShowManualInput: () => void;
   onShowModelSettings: () => void;
 }
@@ -32,7 +31,7 @@ export function TranslationActionList({
   const actionHandlers: Record<string, () => Promise<void> | void> = {
     "selected-text": async () => {
       const selectedText = await getSelectedTextSafely();
-      onTranslate("自動判定", selectedText || "");
+      onTranslate(selectedText || "");
     },
     "manual-input": () => onShowManualInput(),
     "model-settings": () => onShowModelSettings(),
