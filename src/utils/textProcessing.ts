@@ -142,3 +142,16 @@ export function createJaToEnSystemPrompt(): string {
 export function containsJapanese(text: string): boolean {
   return /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9faf\uff66-\uff9f]/.test(text);
 }
+
+/**
+ * テキストが日本語を含むか判定し、翻訳方向を自動判定する
+ * @param text 判定対象のテキスト
+ * @returns TranslationDirection ("日→英" or "英→日")
+ */
+export function detectTranslationDirection(text: string): TranslationDirection {
+  return containsJapanese(text) ? "日→英" : "英→日";
+}
+
+export function createSystemPrompt(direction: TranslationDirection): string {
+  return direction === "日→英" ? createJaToEnSystemPrompt() : createEnToJaSystemPrompt();
+}
