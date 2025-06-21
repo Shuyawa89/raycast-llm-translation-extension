@@ -101,7 +101,6 @@ export async function translateText(text: string, systemPrompt: string): Promise
   }
 
   // システムプロンプトと翻訳対象テキストを配列にまとめておく
-  // 翻訳方向に応じて動的にシステムプロンプトを作成する
   const messages: ChatMessage[] = [
     {
       role: 'system',
