@@ -1,15 +1,43 @@
-# LLM翻訳 Raycast拡張機能
+# 🚀 Smart LLM Translator for Raycast
 
-LLMを活用した日英/英日翻訳機能を提供するRaycast拡張機能です。
+**高精度なLLM翻訳機能を提供するRaycast拡張機能**
 
-## 目的
+スマートな言語判定により、日本語・英語を自動的に適切な方向に翻訳します。Ollama、OpenAI、Claude、Geminiなど複数のLLMプロバイダーに対応。
 
-- **生産性向上**: 日常的な翻訳作業の効率化
-- **拡張性**: 将来的なLLM機能（要約、解説など）追加の基盤構築
+![Extension Icon](assets/extension-icon.png)
 
-## 前提条件
+## 🎯 特徴
 
-### LLM API設定（いずれか選択）
+### ✨ スマート翻訳機能
+- **自動言語判定**: テキストを解析し、日本語→英語 / 英語→日本語を自動選択
+- **高精度翻訳**: 専用システムプロンプトによる自然で流暢な翻訳
+- **長文対応**: 短文から長文まで幅広いテキストサイズに対応
+
+### 🔧 柔軟なLLM設定
+- **マルチプロバイダー**: Ollama、OpenAI、Claude、Geminiなど複数対応
+- **簡単設定**: UIからモデルの追加・削除・APIキー設定が可能
+- **ローカル・クラウド**: ローカルLLM（Ollama）とクラウドAPI両方サポート
+
+### 📊 詳細な結果表示
+- **対比表示**: 原文と翻訳結果を並べて表示
+- **メタ情報**: 使用モデル、処理時間、トークン使用量を表示
+- **エラーサポート**: 詳細なエラー情報と対処方法を提示
+
+## 🏗️ アーキテクチャ
+
+### 設計思想
+```
+src/
+├── types/          # 型定義（Domain Layer）
+├── utils/          # 純粋なビジネスロジック（Domain Layer）
+├── services/       # 外部API通信（Infrastructure Layer）
+├── hooks/          # UI状態管理・ロジック（Application Layer）
+└── components/     # UIコンポーネント（Presentation Layer）
+```
+
+## 🚀 クイックスタート
+
+### 前提条件
 
 #### Option A: Ollama（推奨・無料）
 ```bash
@@ -23,69 +51,87 @@ ollama serve
 ollama pull qwen3:8b
 ```
 
-#### Option B: OpenAI API
-- OpenAI APIキーの取得
-- `src/services/translationApi.ts`での設定変更が必要
-  - 将来的にenvファイルへ切り出します。
+#### Option B: クラウドAPI
+以下のいずれかのAPIキーを取得：
+- **OpenAI API** (GPT-4, GPT-3.5-turbo)
+- **Anthropic API** (Claude)
+- **Google AI API** (Gemini)
 
-## 機能
+### インストール・設定
+
+1. **拡張機能を起動**
+   ```
+   Raycast → llmTranslate
+   ```
+
+2. **モデル設定**
+   - 「モデル設定」を選択
+   - 使用したいLLMプロバイダーを追加
+   - APIキーを設定（クラウドAPI使用時）
+
+3. **翻訳開始**
+   - テキストを選択して「選択テキスト翻訳」
+   - または「手動入力翻訳」でフォーム入力
+
+## 📱 使用方法
 
 ### 1. 選択テキスト翻訳
-- システム上で選択したテキストを自動的に翻訳
-- 言語を自動判定して適切な方向に翻訳
-- 翻訳結果をMarkdown形式で表示
-
-### 2. 手動入力翻訳
-- フォームから自由にテキストを入力して翻訳
-- 長文テキストにも対応
-- リアルタイムでの入力プレビュー
-
-### 3. 翻訳結果表示
-- 元テキストと翻訳結果の対比表示
-- 使用モデル、処理時間、トークン使用量の表示
-- エラー時の詳細情報と対処方法の表示
-
-## 使い方
-
-1. **Raycastを開く**: `Cmd + Space`
-2. **拡張機能を検索**: "llmTranslate"と入力
-3. **翻訳タイプを選択**:
-   - 「選択テキスト翻訳」: 事前にテキストを選択してから実行
-   - 「手動入力翻訳」: フォームでテキストを入力
-4. **結果確認**: Markdown形式で翻訳結果を確認
-5. **リストに戻る**: Actionパネルから「リストに戻る」を選択
-
-## 設定
-
-### API設定の変更
-`src/services/translationApi.ts`でAPI設定を変更できます：
-
-```typescript
-const DEFAULT_CONFIG: ApiConfig = {
-  baseUrl: "http://localhost:11434/v1", // Ollama
-  model: "qwen3:8b",
-  apiKey: "API_KEY", // OpenAI API使用時
-};
+```
+1. システム上でテキストを選択
+2. Raycast → llmTranslate → 選択テキスト翻訳
+3. 自動で言語判定・翻訳実行
+4. 結果をMarkdown形式で確認
 ```
 
-## 技術スタック
+### 2. 手動入力翻訳
+```
+1. Raycast → llmTranslate → 手動入力翻訳
+2. フォームにテキストを入力
+3. 送信ボタンで翻訳実行
+4. 結果確認
+```
 
-- **Framework**: React + TypeScript
-- **Platform**: Raycast API
-- **LLM**: Ollama (qwen3:8b) / OpenAI API
-- **Styling**: Raycast Native Components
+### 3. モデル管理
+```
+1. Raycast → llmTranslate → モデル設定
+2. 新しいモデルを追加
+3. APIキーの設定
+4. デフォルトモデルの変更
+```
 
-## 今後の拡張予定
+## 🔧 対応LLMプロバイダー
 
-- 要約作成機能
-- 文章解説機能
-- 言語学習支援機能
-- 翻訳履歴管理
+| プロバイダー | モデル例 | 設定方法 | 費用 |
+|-------------|----------|----------|------|
+| **Ollama** | qwen3:8b | ローカルインストール | 無料 |
+| **OpenAI** | gpt-4o, gpt-3.5-turbo | APIキー設定 | 従量課金 |
+| **Anthropic** | claude-3-sonnet | APIキー設定 | 従量課金 |
+| **Google** | gemini-pro | APIキー設定 | 従量課金 |
 
-## 開発
+### 推奨設定
 
+#### 🏠 ローカル環境（無料）
 ```bash
-# 開発モード
+# 高性能バランス型
+ollama pull qwen2.5:7b
+
+# 軽量高速型  
+ollama pull phi3:mini
+```
+
+#### ☁️ クラウド環境（高精度）
+- **GPT-4o**: 最高精度、やや高コスト
+- **Claude-3-Sonnet**: 自然な翻訳、中コスト
+- **Gemini-Pro**: 良好なバランス、低コスト
+
+## 🛠️ 開発・カスタマイズ
+
+### 開発環境セットアップ
+```bash
+# 依存関係インストール
+npm install
+
+# 開発モード起動
 npm run dev
 
 # ビルド
@@ -93,4 +139,26 @@ npm run build
 
 # リント
 npm run lint
+```
+
+### カスタムシステムプロンプト
+翻訳の品質をカスタマイズしたい場合：
+
+```typescript
+// src/utils/textProcessing.ts
+export function createEnToJaSystemPrompt(): string {
+  return `あなたの専用翻訳指示をここに記述`;
+}
+
+export function createJaToEnSystemPrompt(): string {
+  return `Your custom translation instructions here`;
+}
+```
+
+### 新しい言語の追加
+```typescript
+// src/utils/textProcessing.ts
+export function detectLanguage(text: string): Language {
+  // 言語判定ロジックを拡張
+}
 ```
