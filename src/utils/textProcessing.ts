@@ -12,7 +12,7 @@ export function removeThinkTags(text: string): string {
   return text
     .replace(/<think>[\s\S]*?<\/think>/g, "") // <think>...</think>を除去
     .trim() // 前後の空白を除去
-    .replace(/\/nothink$/, "");   // 文末の"/nothink"タグを削除(thinkingモデル以外用)
+    .replace(/\/nothink$/, ""); // 文末の"/nothink"タグを削除(thinkingモデル以外用)
 }
 
 /**
