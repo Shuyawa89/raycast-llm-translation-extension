@@ -5,15 +5,15 @@ interface TranslationResultViewProps {
   onBack: () => void;
 }
 
-export function TranslationResultView({markdown, onBack}: TranslationResultViewProps) {
+export function TranslationResultView({ markdown, onBack }: TranslationResultViewProps) {
   return (
-        <Detail
-          markdown={markdown}
-          actions={
-            <ActionPanel>
-              <Action title="リストに戻る" onAction={onBack} />
-            </ActionPanel>
-          }
-        />
-      );
+    <Detail
+      markdown={markdown}
+      actions={
+        <ActionPanel>
+          <Action title="リストに戻る" onAction={onBack} />
+        </ActionPanel>
+      }
+    />
+  );
 }

@@ -10,17 +10,8 @@ interface ModelSettingsViewProps {
 }
 
 export function ModelSettingsView({ onBack }: ModelSettingsViewProps) {
-  const {
-    models,
-    defaultModelId,
-    isLoading,
-    error,
-    addModel,
-    removeModel,
-    updateApiKey,
-    resetToDefault,
-    setDefaultModel,
-  } = useModelConfig();
+  const { models, defaultModelId, isLoading, addModel, removeModel, updateApiKey, resetToDefault, setDefaultModel } =
+    useModelConfig();
 
   const [editingModel, setEditingModel] = useState<LlmModel | null>(null);
   const [selectedModel, setSelectedModel] = useState<LlmModel | null>(null);
