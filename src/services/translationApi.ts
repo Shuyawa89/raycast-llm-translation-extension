@@ -1,157 +1,59 @@
-import { ChatCompletionRequest, ChatCompletionResponse, ApiConfig, ChatMessage } from "../types/translation";
+import OpenAI from "openai";
+import { ChatCompletionResponse, ChatMessage } from "../types/translation";
 import { ConfigStorage } from "../utils/configStorage";
-
-const DEFAULT_CONFIG: ApiConfig = {
-  baseUrl: "http://localhost:11434/v1", // Ollama OpenAI互換エンドポイント
-  model: "qwen3:8b", // 使用するモデル
-  apiKey: "API_KEY", // オンラインLLM使用時のAPI Key
-};
-
-/**
- * 翻訳APIクライアントクラス
- * OllamaやOpenAI互換APIへのリクエストを管理する
- */
-class TranslationApiClient {
-  private config: ApiConfig;
-
-  /**
-   * コンストラクタ
-   * @param config - API設定（省略時はデフォルト設定を使用）
-   */
-  constructor(config: ApiConfig = DEFAULT_CONFIG) {
-    this.config = config;
-  }
-
-  /**
-   * チャット補完APIを呼び出し、翻訳結果を取得する
-   * @param messages - チャットメッセージ配列（翻訳指示やユーザー入力など）
-   * @returns ChatCompletionResponse型のAPIレスポンス
-   * @throws APIエラー時は例外をスロー
-   */
-  async createChatCompletion(messages: ChatMessage[]): Promise<ChatCompletionResponse> {
-    const requestData: ChatCompletionRequest = {
-      model: this.config.model,
-      messages,
-      stream: false,
-      temperature: 0.1,
-      max_tokens: 10000,
-    };
-
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-    };
-
-    if (this.config.apiKey) {
-      headers["Authorization"] = `Bearer ${this.config.apiKey}`;
-    }
-
-    const requestUrl = `${this.config.baseUrl}/chat/completions`;
-    const response = await fetch(requestUrl, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(requestData),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`API error (${response.status}): ${errorText}`);
-    }
-
-    return (await response.json()) as ChatCompletionResponse;
-  }
-
-  /**
-   * 設定を更新する
-   * @param newConfig - 変更したい設定項目（部分的に指定可能）
-   */
-  updateConfig(newConfig: Partial<ApiConfig>): void {
-    this.config = {...this.config, ...newConfig };
-  }
-
-  /**
-   * 現在の設定を取得する
-   * @returns 現在のApiConfigオブジェクト
-   */
-  getConfig(): ApiConfig {
-    return { ...this.config };
-  }
-}
-
-// シングルトンインスタンス
-const apiClient = new TranslationApiClient();
 
 /**
  * テキストを翻訳する
  * システムプロンプトとユーザー入力を組み合わせてAPIへリクエストし、翻訳結果を取得する
  *
  * @param text 翻訳対象のテキスト
+ * @param systemPrompt システムプロンプト
  * @returns Promise<ChatCompletionResponse> 翻訳結果（OpenAI形式のレスポンス）
  */
 export async function translateText(text: string, systemPrompt: string): Promise<ChatCompletionResponse> {
   // UserConfigからモデル設定を取得して反映する
   const userConfig = await ConfigStorage.loadUserConfig();
-  const model = userConfig.models.find(m => m.id === userConfig.defaultModelId);
+  const model = userConfig.models.find((m) => m.id === userConfig.defaultModelId);
 
-  if(model) {
-    setApiConfig({
-      baseUrl: model.baseUrl,
-      model: model.modelName,
-      apiKey: model.apiKey,
-    })
+  if (!model) {
+    throw new Error("デフォルトのモデル設定が見つかりません。");
   }
+
+  const openai = new OpenAI({
+    baseURL: model.baseUrl,
+    apiKey: model.apiKey || "ollama", // Ollamaの場合はAPIキーは不要
+  });
 
   // システムプロンプトと翻訳対象テキストを配列にまとめておく
   const messages: ChatMessage[] = [
     {
-      role: 'system',
-      content: systemPrompt
+      role: "system",
+      content: systemPrompt,
     },
     {
-      role: 'user',
-      content: text + " /nothink"
-    }
+      role: "user",
+      content: text + " /nothink",
+    },
   ];
 
-  return await apiClient.createChatCompletion(messages);
-}
-
-/**
- * APIサーバーとの接続確認を行う
- * Ollamaの場合はローカルサーバーの疎通確認を行う
- *
- * @returns Promise<boolean> 接続できればtrue、失敗した場合はfalse
- */
-export async function checkApiConnection(): Promise<boolean> {
   try {
-    const config = apiClient.getConfig();
+    const response = await openai.chat.completions.create({
+      model: model.modelName,
+      messages,
+      stream: false,
+      temperature: 0.1,
+      max_tokens: 10000,
+    });
 
-    if (config.baseUrl.includes('localhost:11434')) {
-      const healthCheckUrl = `${config.baseUrl}/api/tags`;
-      const response = await fetch(healthCheckUrl);
-      return response.ok;
+    // openai-nodeのレスポンスを既存のChatCompletionResponse型にキャストする
+    return response as unknown as ChatCompletionResponse;
+  } catch (error) {
+    if (error instanceof OpenAI.APIError) {
+      // OpenAI APIからのエラーレスポンスを処理
+      const errorMessage = `API error (${error.status}): ${error.message}\n${JSON.stringify(error.error, null, 2)}`;
+      throw new Error(errorMessage);
     }
-
-    return true;
-  } catch {
-    return false;
+    // その他のエラー（ネットワークエラーなど）
+    throw error;
   }
 }
-
-/**
- * API設定を更新する
- *
- * @param config 変更したい設定項目（部分的に指定可能）
- */
-export function setApiConfig(config: Partial<ApiConfig>): void {
-  apiClient.updateConfig(config);
-}
-
-/**
- * 現在のAPI設定を取得する
- *
- * @returns ApiConfig 現在の設定内容
- */
-export function getApiConfig(): ApiConfig {
-  return apiClient.getConfig();
-}
-
