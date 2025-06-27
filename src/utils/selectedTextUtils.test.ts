@@ -2,6 +2,9 @@ import { getSelectedText, showToast, Toast } from "@raycast/api";
 import { containsJapanese, checkTextLength, getSelectedTextSafely, CHARACTER_LIMIT } from "./selectedTextUtils";
 
 describe("selectedTextUtils", () => {
+  // getSelectedTextをJestのモック関数としてキャスト
+  const mockGetSelectedText = getSelectedText as jest.Mock;
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -40,14 +43,14 @@ describe("selectedTextUtils", () => {
 
   describe("getSelectedTextSafely", () => {
     it("有効な場合、トリムされた選択テキストを返す", async () => {
-      getSelectedText.mockResolvedValue("  test text  ");
+      mockGetSelectedText.mockResolvedValue("  test text  ");
       const result = await getSelectedTextSafely();
       expect(result).toBe("test text");
       expect(showToast).not.toHaveBeenCalled();
     });
 
     it("選択テキストが空の場合、nullを返し、トーストを表示する", async () => {
-      getSelectedText.mockResolvedValue(" ");
+      mockGetSelectedText.mockResolvedValue(" ");
       const result = await getSelectedTextSafely();
       expect(result).toBeNull();
       expect(showToast).toHaveBeenCalledWith({
@@ -58,7 +61,7 @@ describe("selectedTextUtils", () => {
     });
 
     it("選択テキストが長すぎる場合、nullを返し、トーストを表示する", async () => {
-      getSelectedText.mockResolvedValue("a".repeat(CHARACTER_LIMIT + 1));
+      mockGetSelectedText.mockResolvedValue("a".repeat(CHARACTER_LIMIT + 1));
       const result = await getSelectedTextSafely();
       expect(result).toBeNull();
       expect(showToast).toHaveBeenCalledWith({
@@ -69,7 +72,7 @@ describe("selectedTextUtils", () => {
     });
 
     it("getSelectedTextがエラーをスローした場合、nullを返し、トーストを表示する", async () => {
-      getSelectedText.mockRejectedValue(new Error("Read error"));
+      mockGetSelectedText.mockRejectedValue(new Error("Read error"));
       const result = await getSelectedTextSafely();
       expect(result).toBeNull();
       expect(showToast).toHaveBeenCalledWith({
