@@ -44,7 +44,7 @@ export function useModelConfig() {
 
       if (result.success) {
         await loadAndSetUserConfig();
-      } else {
+      } else if (result.success === false) {
         throw new Error(result.error);
       }
     } catch (error) {
@@ -62,7 +62,7 @@ export function useModelConfig() {
       const result = await ConfigStorage.removeModel(modelId);
       if (result.success) {
         await loadAndSetUserConfig();
-      } else {
+      } else if (result.success === false) {
         throw new Error(result.error);
       }
     } catch (error) {
@@ -80,7 +80,7 @@ export function useModelConfig() {
       const result = await ConfigStorage.updateModelApiKey(modelId, apiKey);
       if (result.success) {
         await loadAndSetUserConfig();
-      } else {
+      } else if (result.success === false) {
         throw new Error(result.error);
       }
     } catch (error) {
@@ -98,7 +98,7 @@ export function useModelConfig() {
       const result = await ConfigStorage.resetToDefault();
       if (result.success) {
         await loadAndSetUserConfig();
-      } else {
+      } else if (result.success === false) {
         throw new Error(result.error);
       }
     } catch (error) {
