@@ -60,7 +60,7 @@ describe("translationApi", () => {
   });
 
   describe("translateText", () => {
-    it("should call OpenAI API with correct parameters and return translated text", async () => {
+    it("正しいパラメータでOpenAI APIを呼び出し、翻訳されたテキストを返す", async () => {
       const mockResponse = {
         id: "chatcmpl-123",
         object: "chat.completion",
@@ -106,7 +106,7 @@ describe("translationApi", () => {
       expect(result).toEqual(mockResponse);
     });
 
-    it("should throw an error if default model is not found", async () => {
+    it("デフォルトモデルが見つからない場合、エラーをスローする", async () => {
       mockConfigStorage.loadUserConfig.mockResolvedValue({
         models: [],
         defaultModelId: "non-existent-model",
@@ -115,7 +115,7 @@ describe("translationApi", () => {
       await expect(translateText("Hello", "Prompt")).rejects.toThrow("デフォルトのモデル設定が見つかりません。");
     });
 
-    it("should throw an error if OpenAI API returns an error", async () => {
+    it("OpenAI APIがエラーを返した場合、エラーをスローする", async () => {
       const mockError = new mockOpenAI.APIError(
         400,
         { error: { message: "Bad Request" } },
@@ -129,7 +129,7 @@ describe("translationApi", () => {
       );
     });
 
-    it("should throw a generic error for non-API errors", async () => {
+    it("API以外の一般的なエラーの場合、エラーをスローする", async () => {
       const genericError = new Error("Network error");
       mockCreateCompletion.mockRejectedValue(genericError);
 

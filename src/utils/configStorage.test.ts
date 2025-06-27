@@ -12,7 +12,7 @@ describe("ConfigStorage", () => {
   });
 
   describe("loadUserConfig", () => {
-    it("should return default config if no user data is stored", async () => {
+    it("ユーザーデータが保存されていない場合、デフォルト設定を返す", async () => {
       LocalStorage.getItem.mockResolvedValue(null);
       const config = await ConfigStorage.loadUserConfig();
       expect(config).toEqual({
@@ -22,7 +22,7 @@ describe("ConfigStorage", () => {
       expect(LocalStorage.getItem).toHaveBeenCalledWith("userConfigKey");
     });
 
-    it("should return stored user config if data exists", async () => {
+    it("データが存在する場合、保存されたユーザー設定を返す", async () => {
       const storedConfig = {
         models: [{ id: "test", name: "Test Model", baseUrl: "url", modelName: "model", requiresApiKey: false }],
         defaultModelId: "test",
@@ -32,7 +32,7 @@ describe("ConfigStorage", () => {
       expect(config).toEqual(storedConfig);
     });
 
-    it("should return default config if stored data is invalid JSON", async () => {
+    it("保存されたデータが無効なJSONの場合、デフォルト設定を返す", async () => {
       LocalStorage.getItem.mockResolvedValue("invalid json");
       const config = await ConfigStorage.loadUserConfig();
       expect(config).toEqual({
@@ -43,7 +43,7 @@ describe("ConfigStorage", () => {
   });
 
   describe("saveUserConfig", () => {
-    it("should save the provided config", async () => {
+    it("提供された設定を保存する", async () => {
       const configToSave = {
         models: [{ id: "new", name: "New Model", baseUrl: "url", modelName: "model", requiresApiKey: true }],
         defaultModelId: "new",
@@ -53,7 +53,7 @@ describe("ConfigStorage", () => {
       expect(LocalStorage.setItem).toHaveBeenCalledWith("userConfigKey", JSON.stringify(configToSave));
     });
 
-    it("should return error if saving fails", async () => {
+    it("保存に失敗した場合、エラーを返す", async () => {
       LocalStorage.setItem.mockRejectedValue(new Error("Save error"));
       const configToSave = {
         models: [{ id: "new", name: "New Model", baseUrl: "url", modelName: "model", requiresApiKey: true }],
@@ -66,7 +66,7 @@ describe("ConfigStorage", () => {
   });
 
   describe("addModel", () => {
-    it("should add a new model", async () => {
+    it("新しいモデルを追加する", async () => {
       LocalStorage.getItem.mockResolvedValue(JSON.stringify(ConfigStorage["getDefaultUserConfig"]()));
       const newModel = { id: "new", name: "New Model", baseUrl: "url", modelName: "model", requiresApiKey: false };
       const result = await ConfigStorage.addModel(newModel);
@@ -76,7 +76,7 @@ describe("ConfigStorage", () => {
       expect(savedConfig.models).toContainEqual(newModel);
     });
 
-    it("should return error if model ID already exists", async () => {
+    it("モデルIDがすでに存在する場合、エラーを返す", async () => {
       LocalStorage.getItem.mockResolvedValue(JSON.stringify(ConfigStorage["getDefaultUserConfig"]()));
       const existingModel = DEFAULT_MODELS[0];
       const result = await ConfigStorage.addModel(existingModel);
@@ -86,7 +86,7 @@ describe("ConfigStorage", () => {
   });
 
   describe("removeModel", () => {
-    it("should remove an existing model", async () => {
+    it("既存のモデルを削除する", async () => {
       const initialConfig = {
         models: [
           ...DEFAULT_MODELS,
@@ -101,7 +101,7 @@ describe("ConfigStorage", () => {
       expect(savedConfig.models).not.toContainEqual(expect.objectContaining({ id: "toRemove" }));
     });
 
-    it("should change default model if removed model was default", async () => {
+    it("削除されたモデルがデフォルトだった場合、デフォルトモデルを変更する", async () => {
       const initialConfig = {
         models: [
           { id: "default", name: "Default", baseUrl: "url", modelName: "model", requiresApiKey: false },
@@ -116,14 +116,14 @@ describe("ConfigStorage", () => {
       expect(savedConfig.defaultModelId).toBe("other");
     });
 
-    it("should return error if model ID does not exist", async () => {
+    it("モデルIDが存在しない場合、エラーを返す", async () => {
       LocalStorage.getItem.mockResolvedValue(JSON.stringify(ConfigStorage["getDefaultUserConfig"]()));
       const result = await ConfigStorage.removeModel("nonExistent");
       expect(result.success).toBe(false);
       expect(result.error).toContain("存在しません");
     });
 
-    it("should return error if trying to remove all models", async () => {
+    it("全てのモデルを削除しようとした場合、エラーを返す", async () => {
       const singleModelConfig = {
         models: [{ id: "single", name: "Single", baseUrl: "url", modelName: "model", requiresApiKey: false }],
         defaultModelId: "single",
@@ -136,7 +136,7 @@ describe("ConfigStorage", () => {
   });
 
   describe("updateModelApiKey", () => {
-    it("should update the API key for an existing model", async () => {
+    it("既存のモデルのAPIキーを更新する", async () => {
       LocalStorage.getItem.mockResolvedValue(JSON.stringify(ConfigStorage["getDefaultUserConfig"]()));
       const modelId = DEFAULT_MODEL_ID;
       const newApiKey = "new-api-key";
@@ -147,7 +147,7 @@ describe("ConfigStorage", () => {
       expect(updatedModel.apiKey).toBe(newApiKey);
     });
 
-    it("should return error if model ID does not exist", async () => {
+    it("モデルIDが存在しない場合、エラーを返す", async () => {
       LocalStorage.getItem.mockResolvedValue(JSON.stringify(ConfigStorage["getDefaultUserConfig"]()));
       const result = await ConfigStorage.updateModelApiKey("nonExistent", "key");
       expect(result.success).toBe(false);
@@ -156,7 +156,7 @@ describe("ConfigStorage", () => {
   });
 
   describe("resetToDefault", () => {
-    it("should reset config to default", async () => {
+    it("設定をデフォルトにリセットする", async () => {
       const customConfig = {
         models: [{ id: "custom", name: "Custom", baseUrl: "url", modelName: "model", requiresApiKey: false }],
         defaultModelId: "custom",
@@ -175,7 +175,7 @@ describe("ConfigStorage", () => {
   });
 
   describe("setDefaultModel", () => {
-    it("should set a new default model", async () => {
+    it("新しいデフォルトモデルを設定する", async () => {
       const initialConfig = {
         models: [
           ...DEFAULT_MODELS,
@@ -190,7 +190,7 @@ describe("ConfigStorage", () => {
       expect(savedConfig.defaultModelId).toBe("newDefault");
     });
 
-    it("should return error if model ID does not exist", async () => {
+    it("モデルIDが存在しない場合、エラーを返す", async () => {
       LocalStorage.getItem.mockResolvedValue(JSON.stringify(ConfigStorage["getDefaultUserConfig"]()));
       const result = await ConfigStorage.setDefaultModel("nonExistent");
       expect(result.success).toBe(false);

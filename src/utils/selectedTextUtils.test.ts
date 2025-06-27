@@ -7,12 +7,12 @@ describe("selectedTextUtils", () => {
   });
 
   describe("containsJapanese", () => {
-    it("should return true if text contains Japanese characters", () => {
+    it("日本語の文字を含む場合、trueを返す", () => {
       expect(containsJapanese("こんにちは")).toBe(true);
       expect(containsJapanese("Hello こんにちは World")).toBe(true);
     });
 
-    it("should return false if text does not contain Japanese characters", () => {
+    it("日本語の文字を含まない場合、falseを返す", () => {
       expect(containsJapanese("Hello World")).toBe(false);
       expect(containsJapanese("12345")).toBe(false);
       expect(containsJapanese("!@#$%")).toBe(false);
@@ -20,17 +20,17 @@ describe("selectedTextUtils", () => {
   });
 
   describe("checkTextLength", () => {
-    it("should return isValid: true if text length is within limit", () => {
+    it("テキストの長さが制限内の場合、isValid: trueを返す", () => {
       const text = "a".repeat(CHARACTER_LIMIT - 1);
       expect(checkTextLength(text).isValid).toBe(true);
     });
 
-    it("should return isValid: true if text length is exactly the limit", () => {
+    it("テキストの長さが制限と全く同じ場合、isValid: trueを返す", () => {
       const text = "a".repeat(CHARACTER_LIMIT);
       expect(checkTextLength(text).isValid).toBe(true);
     });
 
-    it("should return isValid: false and message if text length exceeds limit", () => {
+    it("テキストの長さが制限を超える場合、isValid: falseとメッセージを返す", () => {
       const text = "a".repeat(CHARACTER_LIMIT + 1);
       const result = checkTextLength(text);
       expect(result.isValid).toBe(false);
@@ -39,14 +39,14 @@ describe("selectedTextUtils", () => {
   });
 
   describe("getSelectedTextSafely", () => {
-    it("should return trimmed selected text if valid", async () => {
+    it("有効な場合、トリムされた選択テキストを返す", async () => {
       getSelectedText.mockResolvedValue("  test text  ");
       const result = await getSelectedTextSafely();
       expect(result).toBe("test text");
       expect(showToast).not.toHaveBeenCalled();
     });
 
-    it("should return null and show toast if selected text is empty", async () => {
+    it("選択テキストが空の場合、nullを返し、トーストを表示する", async () => {
       getSelectedText.mockResolvedValue(" ");
       const result = await getSelectedTextSafely();
       expect(result).toBeNull();
@@ -57,7 +57,7 @@ describe("selectedTextUtils", () => {
       });
     });
 
-    it("should return null and show toast if selected text is too long", async () => {
+    it("選択テキストが長すぎる場合、nullを返し、トーストを表示する", async () => {
       getSelectedText.mockResolvedValue("a".repeat(CHARACTER_LIMIT + 1));
       const result = await getSelectedTextSafely();
       expect(result).toBeNull();
@@ -68,7 +68,7 @@ describe("selectedTextUtils", () => {
       });
     });
 
-    it("should return null and show toast if getSelectedText throws an error", async () => {
+    it("getSelectedTextがエラーをスローした場合、nullを返し、トーストを表示する", async () => {
       getSelectedText.mockRejectedValue(new Error("Read error"));
       const result = await getSelectedTextSafely();
       expect(result).toBeNull();
