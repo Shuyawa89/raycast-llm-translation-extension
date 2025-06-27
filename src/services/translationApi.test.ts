@@ -120,7 +120,7 @@ describe("translationApi", () => {
         400,
         { error: { message: "Bad Request" } },
         "Bad Request",
-        { status: 400, headers: new Headers() },
+        new Headers(),
       );
       mockCreateCompletion.mockRejectedValue(mockError);
 
